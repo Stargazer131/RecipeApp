@@ -1,70 +1,54 @@
 package com.stargazer.recipeapp.ui.activity
 
 
-import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
-import androidx.activity.viewModels
+import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import androidx.fragment.app.Fragment
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.stargazer.recipeapp.R
-import com.stargazer.recipeapp.adapter.NoteClickDeleteInterface
-import com.stargazer.recipeapp.adapter.NoteClickInterface
-import com.stargazer.recipeapp.adapter.NoteRVAdapter
-import com.stargazer.recipeapp.model.Note
-import com.stargazer.recipeapp.viewmodel.NoteViewModel
+import com.stargazer.recipeapp.ui.fragment.IngredientListFragment
+import com.stargazer.recipeapp.ui.fragment.RecipeListFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), NoteClickInterface, NoteClickDeleteInterface {
-
-    private val viewModal: NoteViewModel by viewModels()
-    lateinit var notesRV: RecyclerView
-    lateinit var addFAB: FloatingActionButton
-
+class MainActivity : AppCompatActivity() {
+    private lateinit var bottomNavigationView: BottomNavigationView
+    private lateinit var fragmentContainer: FrameLayout
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        notesRV = findViewById(R.id.notesRV)
-        addFAB = findViewById(R.id.idFAB)
+        bottomNavigationView = findViewById(R.id.bottom_navigation)
+        fragmentContainer = findViewById(R.id.fragment_container)
 
-        notesRV.layoutManager = LinearLayoutManager(this)
-        val noteRVAdapter = NoteRVAdapter(this, this, this)
-        notesRV.adapter = noteRVAdapter
+        setupNavigation()
+    }
 
-        // on below line we are calling all notes method
-        // from our view modal class to observer the changes on list.
-        viewModal.allNotes.observe(this, Observer { list ->
-            list?.let {
-                noteRVAdapter.updateList(it)
+    private fun setupNavigation() {
+        bottomNavigationView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.menu_recipe -> {
+                    loadFragment(RecipeListFragment.newInstance())
+                    true
+                }
+
+                R.id.menu_ingredient -> {
+                    loadFragment(IngredientListFragment.newInstance())
+                    true
+                }
+
+                else -> false
             }
-        })
-
-        addFAB.setOnClickListener {
-            val intent = Intent(this@MainActivity, AddEditNoteActivity::class.java)
-            startActivity(intent)
-            this.finish()
         }
+
+        bottomNavigationView.selectedItemId = R.id.menu_recipe
     }
 
-    override fun onNoteClick(note: Note) {
-        // opening a new intent and passing a data to it.
-        val intent = Intent(this@MainActivity, AddEditNoteActivity::class.java)
-        intent.putExtra("noteType", "Edit")
-        intent.putExtra("noteTitle", note.noteTitle)
-        intent.putExtra("noteDescription", note.noteDescription)
-        intent.putExtra("noteId", note.id)
-        startActivity(intent)
-        this.finish()
-    }
-
-    override fun onDeleteIconClick(note: Note) {
-        viewModal.deleteNote(note)
-        Toast.makeText(this, "${note.noteTitle} Deleted", Toast.LENGTH_LONG).show()
+    private fun loadFragment(fragment: Fragment) {
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.fragment_container, fragment)
+        transaction.commit()
     }
 }

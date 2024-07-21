@@ -16,7 +16,7 @@
         android:theme="@style/Theme.RecipeApp"
         tools:targetApi="31">
         <activity
-            android:name=".ui.activity.AddEditNoteActivity"
+            android:name=".ui.activity.EditIngredientActivity"
             android:exported="false" />
         <activity
             android:name=".ui.activity.MainActivity"

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@+id/recipeListFragment">
+
+    <fragment
+        android:id="@+id/recipeListFragment"
+        android:name="com.stargazer.recipeapp.ui.fragment.RecipeListFragment"
+        android:label="RecipeListFragment" />
+
+    <fragment
+        android:id="@+id/ingredientListFragment"
+        android:name="com.stargazer.recipeapp.ui.fragment.IngredientListFragment"
+        android:label="IngredientListFragment" />
+</navigation>
