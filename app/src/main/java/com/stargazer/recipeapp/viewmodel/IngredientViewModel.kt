@@ -16,46 +16,41 @@ class IngredientViewModel @Inject constructor(
     private val ingredientRepository: IngredientRepository
 ) : ViewModel() {
 
-    private val _ingredient = MutableLiveData<Ingredient>()
+    private val _ingredient = MutableLiveData(Ingredient("", null, null))
     val ingredient: LiveData<Ingredient> get() = _ingredient
     val allIngredients = ingredientRepository.getAll()
 
-    fun getIngredient(id: Long) {
+    fun setIngredientData(id: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             val result = ingredientRepository.getById(id)
             _ingredient.postValue(result)
         }
     }
 
-    fun updateIngredientName(newName: String) {
+    fun updateIngredientData(name: String?, description: String?, imageLink: String?) {
         _ingredient.value?.let { currentIngredient ->
-            val updatedIngredient = currentIngredient.copy(name = newName)
-            _ingredient.postValue(updatedIngredient)
+            val updatedIngredient = currentIngredient.copy(
+                name = name ?: currentIngredient.name,
+                description = description ?: currentIngredient.description,
+                imageLink = imageLink ?: currentIngredient.imageLink
+            )
+            _ingredient.value = updatedIngredient
         }
     }
 
-    fun updateIngredientDescription(newDescription: String) {
-        _ingredient.value?.let { currentIngredient ->
-            val updatedIngredient = currentIngredient.copy(description = newDescription)
-            _ingredient.postValue(updatedIngredient)
-        }
+    fun insertIngredientToDB() = viewModelScope.launch(Dispatchers.IO) {
+        ingredient.value?.let { ingredientRepository.insert(it) }
     }
 
-    fun updateIngredientToDB() {
-        _ingredient.value?.let { currentIngredient ->
-            updateIngredient(currentIngredient)
-        }
-    }
-
-    fun insertIngredient(ingredient: Ingredient) = viewModelScope.launch(Dispatchers.IO) {
-        ingredientRepository.insert(ingredient)
-    }
-
-    fun updateIngredient(ingredient: Ingredient) = viewModelScope.launch(Dispatchers.IO) {
-        ingredientRepository.update(ingredient)
-    }
-
-    fun deleteIngredient(ingredient: Ingredient) = viewModelScope.launch(Dispatchers.IO) {
-        ingredientRepository.delete(ingredient)
-    }
+//    fun insertIngredient(ingredient: Ingredient) = viewModelScope.launch(Dispatchers.IO) {
+//        ingredientRepository.insert(ingredient)
+//    }
+//
+//    fun updateIngredient(ingredient: Ingredient) = viewModelScope.launch(Dispatchers.IO) {
+//        ingredientRepository.update(ingredient)
+//    }
+//
+//    fun deleteIngredient(ingredient: Ingredient) = viewModelScope.launch(Dispatchers.IO) {
+//        ingredientRepository.delete(ingredient)
+//    }
 }

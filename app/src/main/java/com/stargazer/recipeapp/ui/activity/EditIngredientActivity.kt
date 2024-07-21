@@ -8,7 +8,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputEditText
 import com.stargazer.recipeapp.R
-import com.stargazer.recipeapp.model.Ingredient
 import com.stargazer.recipeapp.viewmodel.IngredientViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -34,14 +33,19 @@ class EditIngredientActivity : AppCompatActivity() {
         buttonSave = findViewById(R.id.button_save)
 
         setUpButton()
+        setUpViewContent()
     }
 
     private fun setUpViewContent() {
         if (ingredientId != -1L) {
-            val ingredient = viewModel.getIngredient(ingredientId)
-//            inputName.setText(ingredient.name)
-//            inputDescription.setText(ingredient.description ?: "")
-//            imageView.setImageURI()
+            viewModel.setIngredientData(ingredientId)
+        }
+
+        viewModel.ingredient.observe(this) { item ->
+            item?.let {
+                inputName.setText(item.name)
+                inputDescription.setText(item.description ?: "")
+            }
         }
     }
 
@@ -64,14 +68,9 @@ class EditIngredientActivity : AppCompatActivity() {
         val description = inputDescription.text.toString()
 
         if (ingredientId == -1L) {
-            val ingredient = Ingredient(name, null, description)
-            viewModel.insertIngredient(ingredient)
+            viewModel.updateIngredientData(name, description, null)
+            viewModel.insertIngredientToDB()
         } else {
-            val ingredient = viewModel.getIngredient(ingredientId)
-//            ingredient.name = name
-//            ingredient.description = description
-//            viewModel.updateIngredient(ingredient)
-
 
         }
     }

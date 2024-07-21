@@ -24,7 +24,7 @@
             android:textStyle="bold" />
 
         <ImageButton
-            android:id="@+id/main_search_btn"
+            android:id="@+id/button_search"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_alignParentEnd="true"
@@ -42,6 +42,19 @@
         android:layout_below="@id/main_toolbar"
         android:layout_above="@id/divider"
         android:id="@+id/fragment_container" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/button_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="100dp"
+        android:src="@drawable/ic_add"
+        app:backgroundTint="@color/violet"
+        app:tint="@color/white" />
+
 
     <com.google.android.material.divider.MaterialDivider
         android:id="@+id/divider"
