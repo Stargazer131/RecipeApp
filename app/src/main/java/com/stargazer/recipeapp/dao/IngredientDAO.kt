@@ -37,5 +37,5 @@ interface IngredientDAO {
         WHERE IngredientRecipe.recipeId = :recipeId
         """
     )
-    fun getAllWithQuantityByRecipeId(recipeId: Long): LiveData<List<IngredientQuantity>>
+    suspend fun getAllForRecipe(recipeId: Long): List<IngredientQuantity>
 }

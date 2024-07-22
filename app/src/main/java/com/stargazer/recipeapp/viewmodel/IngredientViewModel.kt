@@ -1,6 +1,5 @@
 package com.stargazer.recipeapp.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -22,11 +21,17 @@ class IngredientViewModel @Inject constructor(
     private val _ingredient = MutableLiveData<Ingredient>()
     val ingredient: LiveData<Ingredient> get() = _ingredient
 
+    ///
     private val _insertResult = MutableLiveData<Long>()
     val insertResult: LiveData<Long> get() = _insertResult
 
+    ////
     private val _updateResult = MutableLiveData<Boolean>()
     val updateResult: LiveData<Boolean> get() = _updateResult
+
+    ////
+    private val _deleteResult = MutableLiveData<Boolean>()
+    val deleteResult: LiveData<Boolean> get() = _deleteResult
 
     fun setIngredientData(id: Long) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -43,7 +48,7 @@ class IngredientViewModel @Inject constructor(
                 description = description ?: currentIngredient.description,
                 imageLink = imageLink ?: currentIngredient.imageLink
             )
-            
+
             updatedIngredient.id = oldId
             _ingredient.value = updatedIngredient
         }
@@ -62,6 +67,14 @@ class IngredientViewModel @Inject constructor(
         ingredientValue?.let {
             val result = ingredientRepository.update(it)
             _updateResult.postValue(result)
+        }
+    }
+
+    fun deleteIngredientFromDB() = viewModelScope.launch(Dispatchers.IO) {
+        val ingredientValue = withContext(Dispatchers.Main) { _ingredient.value }
+        ingredientValue?.let {
+            val result = ingredientRepository.delete(it)
+            _deleteResult.postValue(result)
         }
     }
 

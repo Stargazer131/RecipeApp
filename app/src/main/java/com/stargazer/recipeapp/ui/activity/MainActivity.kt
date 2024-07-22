@@ -35,7 +35,8 @@ class MainActivity : AppCompatActivity() {
         buttonAdd.setOnClickListener {
             when (bottomNavigationView.selectedItemId) {
                 R.id.menu_recipe -> {
-
+                    val intent = Intent(this, EditRecipeActivity::class.java)
+                    startActivity(intent)
                 }
 
                 R.id.menu_ingredient -> {

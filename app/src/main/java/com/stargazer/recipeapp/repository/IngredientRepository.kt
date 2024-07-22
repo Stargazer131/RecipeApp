@@ -28,7 +28,7 @@ class IngredientRepository @Inject constructor(private val ingredientDAO: Ingred
         return ingredientDAO.getAll()
     }
 
-    fun getAllWithQuantityByRecipeId(recipeId: Long): LiveData<List<IngredientQuantity>> {
-        return ingredientDAO.getAllWithQuantityByRecipeId(recipeId)
+    suspend fun getAllForRecipe(recipeId: Long): List<IngredientQuantity> {
+        return ingredientDAO.getAllForRecipe(recipeId)
     }
 }

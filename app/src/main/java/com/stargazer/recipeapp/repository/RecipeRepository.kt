@@ -24,7 +24,7 @@ class RecipeRepository @Inject constructor(private val recipeDAO: RecipeDAO) {
         return recipeDAO.getAll()
     }
 
-    fun getById(recipeId: Long): Recipe {
+    suspend fun getById(recipeId: Long): Recipe {
         return recipeDAO.getById(recipeId)
     }
 }

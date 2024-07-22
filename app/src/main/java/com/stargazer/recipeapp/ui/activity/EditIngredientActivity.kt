@@ -1,5 +1,6 @@
 package com.stargazer.recipeapp.ui.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageButton
@@ -9,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputEditText
 import com.stargazer.recipeapp.R
 import com.stargazer.recipeapp.utils.showToast
+import com.stargazer.recipeapp.utils.showYesNoDialog
 import com.stargazer.recipeapp.viewmodel.IngredientViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -42,15 +44,15 @@ class EditIngredientActivity : AppCompatActivity() {
 
         viewModel.ingredient.observe(this) { item ->
             item?.let {
-                inputName.setText(item.name)
-                inputDescription.setText(item.description ?: "")
+                inputName.setText(it.name)
+                inputDescription.setText(it.description ?: "")
             }
         }
 
         if (ingredientId == -1L) {
             viewModel.insertResult.observe(this) { item ->
                 item?.let {
-                    if (item != -1L) {
+                    if (it != -1L) {
                         showToast(this, "Insert successfully")
                     } else {
                         showToast(this, "Insert fail")
@@ -60,10 +62,22 @@ class EditIngredientActivity : AppCompatActivity() {
         } else {
             viewModel.updateResult.observe(this) { item ->
                 item?.let {
-                    if (item) {
+                    if (it) {
                         showToast(this, "Update successfully")
                     } else {
                         showToast(this, "Update fail")
+                    }
+                }
+            }
+
+            viewModel.deleteResult.observe(this) { item ->
+                item?.let {
+                    if (it) {
+                        val intent = Intent(this, MainActivity::class.java)
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                        startActivity(intent)
+                    } else {
+                        showToast(this, "Delete fail")
                     }
                 }
             }
@@ -75,8 +89,16 @@ class EditIngredientActivity : AppCompatActivity() {
             buttonDelete.isEnabled = false
         }
 
+        buttonDelete.setOnClickListener {
+            showYesNoDialog(this, "Confirm Delete", "Are you sure you want to delete this item?") {
+                viewModel.deleteIngredientFromDB()
+            }
+        }
+
         buttonSave.setOnClickListener {
-            saveData()
+            showYesNoDialog(this, "Confirm Save", "Are you sure you want to save the change?") {
+                saveData()
+            }
         }
     }
 
