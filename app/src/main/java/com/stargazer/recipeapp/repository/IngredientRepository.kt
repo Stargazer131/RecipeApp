@@ -20,7 +20,7 @@ class IngredientRepository @Inject constructor(private val ingredientDAO: Ingred
         return ingredientDAO.delete(ingredient) > 0
     }
 
-    suspend fun getById(ingredientId: Long): Ingredient {
+    suspend fun getById(ingredientId: Long): Ingredient? {
         return ingredientDAO.getById(ingredientId)
     }
 

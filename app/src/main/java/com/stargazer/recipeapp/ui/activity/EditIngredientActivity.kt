@@ -8,6 +8,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputEditText
 import com.stargazer.recipeapp.R
+import com.stargazer.recipeapp.utils.showToast
 import com.stargazer.recipeapp.viewmodel.IngredientViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -33,18 +34,38 @@ class EditIngredientActivity : AppCompatActivity() {
         buttonSave = findViewById(R.id.button_save)
 
         setUpButton()
-        setUpViewContent()
+        setUpObserver()
     }
 
-    private fun setUpViewContent() {
-        if (ingredientId != -1L) {
-            viewModel.setIngredientData(ingredientId)
-        }
+    private fun setUpObserver() {
+        viewModel.setIngredientData(ingredientId)
 
         viewModel.ingredient.observe(this) { item ->
             item?.let {
                 inputName.setText(item.name)
                 inputDescription.setText(item.description ?: "")
+            }
+        }
+
+        if (ingredientId == -1L) {
+            viewModel.insertResult.observe(this) { item ->
+                item?.let {
+                    if (item != -1L) {
+                        showToast(this, "Insert successfully")
+                    } else {
+                        showToast(this, "Insert fail")
+                    }
+                }
+            }
+        } else {
+            viewModel.updateResult.observe(this) { item ->
+                item?.let {
+                    if (item) {
+                        showToast(this, "Update successfully")
+                    } else {
+                        showToast(this, "Update fail")
+                    }
+                }
             }
         }
     }
@@ -71,7 +92,8 @@ class EditIngredientActivity : AppCompatActivity() {
             viewModel.updateIngredientData(name, description, null)
             viewModel.insertIngredientToDB()
         } else {
-
+            viewModel.updateIngredientData(name, description, null)
+            viewModel.updateIngredientToDB()
         }
     }
 

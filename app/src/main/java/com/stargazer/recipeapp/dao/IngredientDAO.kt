@@ -23,7 +23,7 @@ interface IngredientDAO {
     suspend fun delete(ingredient: Ingredient): Int
 
     @Query("SELECT * FROM Ingredient WHERE id = :ingredientId")
-    suspend fun getById(ingredientId: Long): Ingredient
+    suspend fun getById(ingredientId: Long): Ingredient?
 
     @Query("SELECT * FROM Ingredient")
     fun getAll(): LiveData<List<Ingredient>>
