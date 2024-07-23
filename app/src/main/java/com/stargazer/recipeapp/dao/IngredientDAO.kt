@@ -31,11 +31,24 @@ interface IngredientDAO {
     @Transaction
     @Query(
         """
-        SELECT Ingredient.*, IngredientRecipe.quantity, IngredientRecipe.unit 
+        SELECT Ingredient.*, IngredientRecipe.quantity, IngredientRecipe.unit, IngredientRecipe.recipeId
         FROM Ingredient
         INNER JOIN IngredientRecipe ON Ingredient.id = IngredientRecipe.ingredientId
         WHERE IngredientRecipe.recipeId = :recipeId
         """
     )
     suspend fun getAllForRecipe(recipeId: Long): List<IngredientQuantity>
+
+    @Transaction
+    @Query(
+        """
+        SELECT * FROM Ingredient 
+        WHERE id NOT IN (
+            SELECT ingredientId 
+            FROM IngredientRecipe 
+            WHERE recipeId = :recipeId
+        )
+    """
+    )
+    suspend fun getAllNotInRecipe(recipeId: Long): List<Ingredient>
 }

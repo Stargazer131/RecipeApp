@@ -31,4 +31,8 @@ class IngredientRepository @Inject constructor(private val ingredientDAO: Ingred
     suspend fun getAllForRecipe(recipeId: Long): List<IngredientQuantity> {
         return ingredientDAO.getAllForRecipe(recipeId)
     }
+
+    suspend fun getAllNotInRecipe(recipeId: Long): List<Ingredient> {
+        return ingredientDAO.getAllNotInRecipe(recipeId)
+    }
 }

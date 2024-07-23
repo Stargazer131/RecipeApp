@@ -26,3 +26,8 @@ fun showYesNoDialog(context: Context, title: String, message: String, onYes: () 
 
     builder.create().show()
 }
+
+data class MutablePair<A, B>(
+    var first: A,
+    var second: B
+)

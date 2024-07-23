@@ -18,13 +18,14 @@ import androidx.room.ForeignKey
 data class IngredientRecipe(
     var recipeId: Long,
     var ingredientId: Long,
-    var quantity: Double,
-    var unit: String
+    var quantity: Double = 0.0,
+    var unit: String = "unit"
 )
 
 data class IngredientQuantity(
     @Embedded val ingredient: Ingredient,
-    val quantity: Double,
-    val unit: String
+    var quantity: Double,
+    var unit: String,
+    val recipeId: Long
 )
 

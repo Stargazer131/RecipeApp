@@ -21,6 +21,7 @@ class IngredientViewModel @Inject constructor(
     private val _ingredient = MutableLiveData<Ingredient>()
     val ingredient: LiveData<Ingredient> get() = _ingredient
 
+
     ///
     private val _insertResult = MutableLiveData<Long>()
     val insertResult: LiveData<Long> get() = _insertResult
@@ -35,7 +36,7 @@ class IngredientViewModel @Inject constructor(
 
     fun setIngredientData(id: Long) {
         viewModelScope.launch(Dispatchers.IO) {
-            val result = ingredientRepository.getById(id) ?: Ingredient("", null, null)
+            val result = ingredientRepository.getById(id) ?: Ingredient()
             _ingredient.postValue(result)
         }
     }
@@ -77,16 +78,4 @@ class IngredientViewModel @Inject constructor(
             _deleteResult.postValue(result)
         }
     }
-
-//    fun insertIngredient(ingredient: Ingredient) = viewModelScope.launch(Dispatchers.IO) {
-//        ingredientRepository.insert(ingredient)
-//    }
-//
-//    fun updateIngredient(ingredient: Ingredient) = viewModelScope.launch(Dispatchers.IO) {
-//        ingredientRepository.update(ingredient)
-//    }
-//
-//    fun deleteIngredient(ingredient: Ingredient) = viewModelScope.launch(Dispatchers.IO) {
-//        ingredientRepository.delete(ingredient)
-//    }
 }
