@@ -14,11 +14,17 @@ interface IngredientRecipeDAO {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(ingredientRecipe: IngredientRecipe): Long
 
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertAll(ingredientRecipes: List<IngredientRecipe>)
+
     @Update
     suspend fun update(ingredientRecipe: IngredientRecipe): Int
 
     @Delete
     suspend fun delete(ingredientRecipe: IngredientRecipe): Int
+
+    @Query("DELETE FROM IngredientRecipe WHERE recipeId = :recipeId")
+    suspend fun deleteAllByRecipe(recipeId: Long): Int
 
     @Query("SELECT * FROM IngredientRecipe")
     fun getAll(): LiveData<List<IngredientRecipe>>

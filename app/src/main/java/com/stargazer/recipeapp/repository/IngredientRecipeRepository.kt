@@ -11,6 +11,10 @@ class IngredientRecipeRepository @Inject constructor(private val ingredientRecip
         return ingredientRecipeDAO.insert(ingredientRecipe)
     }
 
+    suspend fun insertAll(ingredientRecipes: List<IngredientRecipe>) {
+        return ingredientRecipeDAO.insertAll(ingredientRecipes)
+    }
+
     suspend fun update(ingredientRecipe: IngredientRecipe): Boolean {
         return ingredientRecipeDAO.update(ingredientRecipe) > 0
     }
@@ -21,6 +25,10 @@ class IngredientRecipeRepository @Inject constructor(private val ingredientRecip
 
     fun getAll(): LiveData<List<IngredientRecipe>> {
         return ingredientRecipeDAO.getAll()
+    }
+
+    suspend fun deleteAllByRecipe(recipeId: Long): Int {
+        return ingredientRecipeDAO.deleteAllByRecipe(recipeId)
     }
 
 //    fun getAllByRecipeId(recipeId: Long): LiveData<List<IngredientRecipe>> {

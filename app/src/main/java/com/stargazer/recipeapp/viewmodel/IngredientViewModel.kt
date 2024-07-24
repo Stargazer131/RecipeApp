@@ -23,8 +23,8 @@ class IngredientViewModel @Inject constructor(
 
 
     ///
-    private val _insertResult = MutableLiveData<Long>()
-    val insertResult: LiveData<Long> get() = _insertResult
+    private val _insertResult = MutableLiveData<Boolean>()
+    val insertResult: LiveData<Boolean> get() = _insertResult
 
     ////
     private val _updateResult = MutableLiveData<Boolean>()
@@ -59,7 +59,7 @@ class IngredientViewModel @Inject constructor(
         val ingredientValue = withContext(Dispatchers.Main) { _ingredient.value }
         ingredientValue?.let {
             val result = ingredientRepository.insert(it)
-            _insertResult.postValue(result)
+            _insertResult.postValue(result != -1L)
         }
     }
 

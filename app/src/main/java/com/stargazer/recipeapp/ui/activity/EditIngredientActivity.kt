@@ -44,15 +44,15 @@ class EditIngredientActivity : AppCompatActivity() {
 
         viewModel.ingredient.observe(this) { item ->
             item?.let {
-                inputName.setText(it.name)
-                inputDescription.setText(it.description ?: "")
+                inputName.setText(item.name)
+                inputDescription.setText(item.description)
             }
         }
 
         if (ingredientId == -1L) {
             viewModel.insertResult.observe(this) { item ->
                 item?.let {
-                    if (it != -1L) {
+                    if (it) {
                         showToast(this, "Insert successfully")
                     } else {
                         showToast(this, "Insert fail")
@@ -109,12 +109,11 @@ class EditIngredientActivity : AppCompatActivity() {
 
         val name = inputName.text.toString()
         val description = inputDescription.text.toString()
+        viewModel.updateIngredientData(name, description, null)
 
         if (ingredientId == -1L) {
-            viewModel.updateIngredientData(name, description, null)
             viewModel.insertIngredientToDB()
         } else {
-            viewModel.updateIngredientData(name, description, null)
             viewModel.updateIngredientToDB()
         }
     }
