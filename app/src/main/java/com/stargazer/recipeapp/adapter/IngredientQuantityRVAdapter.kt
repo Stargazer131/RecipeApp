@@ -5,6 +5,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
@@ -13,10 +14,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
 import com.stargazer.recipeapp.R
 import com.stargazer.recipeapp.model.IngredientQuantity
+import com.stargazer.recipeapp.utils.removeAtIndices
+import com.stargazer.recipeapp.utils.showYesNoDialog
 
 class IngredientQuantityRVAdapter(
     val context: Context,
-    val clickDeleteInterface: ClickDeleteInterface
+    val ingredientChangeListener: OnIngredientChangeListener
 ) :
     RecyclerView.Adapter<IngredientQuantityRVAdapter.ViewHolder>() {
 
@@ -46,8 +49,32 @@ class IngredientQuantityRVAdapter(
         holder.inputUnit.setText(allIngredientQuantity[position].unit)
 
         holder.buttonDelete.setOnClickListener {
-            clickDeleteInterface.onDeleteIconClick(position)
+            showYesNoDialog(
+                context,
+                "Confirm delete",
+                "Are you sure you want to delete this ingredient?"
+            ) {
+                ingredientChangeListener.onDeleteIconClick(position)
+            }
         }
+
+        holder.inputUnit.setOnFocusChangeListener { view, hasFocus ->
+            if (!hasFocus) {
+                var unit = (view as? EditText)?.text?.toString()
+                if (unit.isNullOrEmpty()) {
+                    unit = "unit"
+                }
+                allIngredientQuantity[position].unit = unit
+            }
+        }
+
+        holder.inputQuantity.setOnFocusChangeListener { view, hasFocus ->
+            if (!hasFocus) {
+                val quantity = (view as? EditText)?.text?.toString()?.toDoubleOrNull()
+                allIngredientQuantity[position].quantity = quantity ?: 0.0
+            }
+        }
+
     }
 
     override fun getItemCount(): Int {
@@ -56,9 +83,24 @@ class IngredientQuantityRVAdapter(
 
     @SuppressLint("NotifyDataSetChanged")
     fun updateList(newList: List<IngredientQuantity>) {
+        val filterIndices: ArrayList<Int> = arrayListOf()
+        for (i in newList.lastIndex downTo 0) {
+            for (j in i - 1 downTo 0) {
+                val ingredientA = newList[i]
+                val ingredientB = newList[j]
+                if (ingredientA.ingredient.id == ingredientB.ingredient.id) {
+                    filterIndices.add(i)
+                }
+            }
+        }
+
         allIngredientQuantity.clear()
-        allIngredientQuantity.addAll(newList)
+        allIngredientQuantity.addAll(newList.removeAtIndices(filterIndices))
         notifyDataSetChanged()
+    }
+
+    fun getIngredientList(): List<IngredientQuantity> {
+        return ArrayList(allIngredientQuantity)
     }
 
     private fun quantityToString(quantity: Double): String {
@@ -70,8 +112,8 @@ class IngredientQuantityRVAdapter(
     }
 }
 
-interface ClickDeleteInterface {
-    // creating a method for click
-    // action on delete image view.
+interface OnIngredientChangeListener {
+    //    fun onUnitChanged(position: Int, unit: String)
+//    fun onQuantityChanged(position: Int, quantity: Double)
     fun onDeleteIconClick(position: Int)
 }

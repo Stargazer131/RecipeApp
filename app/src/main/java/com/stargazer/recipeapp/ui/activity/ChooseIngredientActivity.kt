@@ -26,6 +26,7 @@ class ChooseIngredientActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: ChooseIngredientRVAdapter
     private var recipeId: Long = 0L
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_choose_ingredient)

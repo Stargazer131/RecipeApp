@@ -51,13 +51,22 @@ class RecipeViewModel @Inject constructor(
         }
     }
 
-    fun addIngredientData(ingredients: ArrayList<Ingredient>, recipeId: Long) {
+    fun syncIngredientListFromRV(newList: List<IngredientQuantity>) {
+        _ingredientQuantityList.value = newList
+    }
+
+    fun updateIngredientQuantity(position: Int, quantity: Double) {
         _ingredientQuantityList.value?.let { currentList ->
             val tempList = ArrayList(currentList)
-            ingredients.forEach {
-                tempList.add(IngredientQuantity(it, 0.0, "unit", recipeId))
-            }
+            tempList[position].quantity = quantity
+            _ingredientQuantityList.value = tempList
+        }
+    }
 
+    fun updateIngredientUnit(position: Int, unit: String) {
+        _ingredientQuantityList.value?.let { currentList ->
+            val tempList = ArrayList(currentList)
+            tempList[position].unit = unit
             _ingredientQuantityList.value = tempList
         }
     }
@@ -66,6 +75,18 @@ class RecipeViewModel @Inject constructor(
         _ingredientQuantityList.value?.let { currentList ->
             val tempList = ArrayList(currentList)
             tempList.removeAt(position)
+            _ingredientQuantityList.value = tempList
+        }
+    }
+
+
+    fun addIngredientData(ingredients: List<Ingredient>, recipeId: Long) {
+        _ingredientQuantityList.value?.let { currentList ->
+            val tempList = ArrayList(currentList)
+            ingredients.forEach {
+                tempList.add(IngredientQuantity(it, 0.0, "unit", recipeId))
+            }
+
             _ingredientQuantityList.value = tempList
         }
     }

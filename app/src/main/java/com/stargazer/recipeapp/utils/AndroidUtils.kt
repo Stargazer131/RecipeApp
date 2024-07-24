@@ -27,6 +27,11 @@ fun showYesNoDialog(context: Context, title: String, message: String, onYes: () 
     builder.create().show()
 }
 
+fun <T> List<T>.removeAtIndices(indices: List<Int>): List<T> {
+    val indexSet = indices.toSet()
+    return this.filterIndexed { index, _ -> index !in indexSet }
+}
+
 data class MutablePair<A, B>(
     var first: A,
     var second: B

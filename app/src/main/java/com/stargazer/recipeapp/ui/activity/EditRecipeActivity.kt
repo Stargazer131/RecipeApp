@@ -14,14 +14,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
 import com.stargazer.recipeapp.R
-import com.stargazer.recipeapp.adapter.ClickDeleteInterface
 import com.stargazer.recipeapp.adapter.IngredientQuantityRVAdapter
+import com.stargazer.recipeapp.adapter.OnIngredientChangeListener
 import com.stargazer.recipeapp.model.Ingredient
 import com.stargazer.recipeapp.viewmodel.RecipeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class EditRecipeActivity : AppCompatActivity(), ClickDeleteInterface {
+class EditRecipeActivity : AppCompatActivity(), OnIngredientChangeListener {
     private val viewModel: RecipeViewModel by viewModels()
     private lateinit var imageView: ImageView
     private lateinit var inputName: TextInputEditText
@@ -54,10 +54,6 @@ class EditRecipeActivity : AppCompatActivity(), ClickDeleteInterface {
         setUpObserverAndRV()
     }
 
-    override fun onDeleteIconClick(position: Int) {
-        viewModel.deleteIngredientData(position)
-    }
-
     private fun setUpObserverAndRV() {
         recyclerView = findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -72,8 +68,7 @@ class EditRecipeActivity : AppCompatActivity(), ClickDeleteInterface {
     }
 
     private fun setUpLauncher() {
-        // Register the launcher to start the new activity and handle the result
-        val resultLauncher = registerForActivityResult(
+        val chooseIngredientLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -84,11 +79,15 @@ class EditRecipeActivity : AppCompatActivity(), ClickDeleteInterface {
             }
         }
 
-//         Launch the new activity when button is clicked
         buttonAddIngredient.setOnClickListener {
+            viewModel.syncIngredientListFromRV(adapter.getIngredientList())
             val intent = Intent(this, ChooseIngredientActivity::class.java)
             intent.putExtra("recipeId", recipeId)
-            resultLauncher.launch(intent)
+            chooseIngredientLauncher.launch(intent)
         }
+    }
+
+    override fun onDeleteIconClick(position: Int) {
+        viewModel.deleteIngredientData(position)
     }
 }
