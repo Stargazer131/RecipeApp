@@ -26,13 +26,13 @@
 
         <ImageButton
             android:id="@+id/button_delete"
-            android:scaleX="1.2"
-            android:scaleY="1.2"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_centerVertical="true"
             android:layout_margin="5dp"
             android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleX="1.2"
+            android:scaleY="1.2"
             android:src="@drawable/ic_delete"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -103,12 +103,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/input_layout_description">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/input_instruction"
-                android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:inputType="textMultiLine" />
-
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -127,18 +121,18 @@
                 android:id="@+id/input_youtube_link"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textMultiLine" />
+                android:inputType="text" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
-            android:id="@+id/text_ingredient_list"
+            android:id="@+id/text_step_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:layout_marginTop="20dp"
             android:layout_marginEnd="5dp"
-            android:text="Ingredient List"
+            android:text="Step List"
             android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constrainedHeight="true"
@@ -147,7 +141,47 @@
             app:layout_constraintTop_toBottomOf="@id/input_layout_youtube_link" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@id/recycler_view"
+            android:id="@+id/recycler_view_step"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="5dp"
+            app:layout_constrainedHeight="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_max="400dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_step_list" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/button_add_step"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="15dp"
+            android:src="@drawable/ic_add"
+            app:backgroundTint="@color/violet"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/recycler_view_step"
+            app:tint="@color/white" />
+
+        <TextView
+            android:id="@+id/text_ingredient_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginEnd="5dp"
+            android:text="Ingredient List"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constrainedHeight="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/recycler_view_step" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_ingredient"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
@@ -159,6 +193,18 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/text_ingredient_list" />
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/button_add_ingredient"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="15dp"
+            android:src="@drawable/ic_add"
+            app:backgroundTint="@color/violet"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/recycler_view_ingredient"
+            app:tint="@color/white" />
+
         <Button
             android:id="@+id/button_save"
             android:layout_width="wrap_content"
@@ -166,22 +212,10 @@
             android:layout_marginTop="15dp"
             android:layout_marginBottom="20dp"
             android:text="Save"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/recycler_view" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/button_add"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="15dp"
-            android:layout_marginBottom="20dp"
-            android:src="@drawable/ic_add"
-            app:backgroundTint="@color/violet"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:tint="@color/white" />
+            app:layout_constraintTop_toBottomOf="@id/recycler_view_ingredient" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

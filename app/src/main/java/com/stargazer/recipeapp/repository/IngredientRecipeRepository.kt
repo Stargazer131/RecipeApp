@@ -7,8 +7,8 @@ import javax.inject.Inject
 
 class IngredientRecipeRepository @Inject constructor(private val ingredientRecipeDAO: IngredientRecipeDAO) {
 
-    suspend fun insert(ingredientRecipe: IngredientRecipe): Long {
-        return ingredientRecipeDAO.insert(ingredientRecipe)
+    suspend fun insert(ingredientRecipe: IngredientRecipe) {
+        ingredientRecipeDAO.insert(ingredientRecipe)
     }
 
     suspend fun insertAll(ingredientRecipes: List<IngredientRecipe>) {
@@ -34,8 +34,4 @@ class IngredientRecipeRepository @Inject constructor(private val ingredientRecip
     suspend fun deleteAllByIngredient(ingredientId: Long): Int {
         return ingredientRecipeDAO.deleteAllByIngredient(ingredientId)
     }
-
-//    fun getAllByRecipeId(recipeId: Long): LiveData<List<IngredientRecipe>> {
-//        return ingredientRecipeDAO.getAllByRecipeId(recipeId)
-//    }
 }

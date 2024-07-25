@@ -9,7 +9,6 @@ import java.util.Date
 data class Recipe(
     var name: String = "",
     var description: String = "",
-    var instructions: String = "",
     var favorite: Boolean = false,
     var updatedTimestamp: Date = Date(),
     var youtubeLink: String = "",

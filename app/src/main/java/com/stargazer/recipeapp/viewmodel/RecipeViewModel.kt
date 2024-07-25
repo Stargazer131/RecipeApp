@@ -9,9 +9,11 @@ import com.stargazer.recipeapp.model.Ingredient
 import com.stargazer.recipeapp.model.IngredientQuantity
 import com.stargazer.recipeapp.model.IngredientRecipe
 import com.stargazer.recipeapp.model.Recipe
+import com.stargazer.recipeapp.model.Step
 import com.stargazer.recipeapp.repository.IngredientRecipeRepository
 import com.stargazer.recipeapp.repository.IngredientRepository
 import com.stargazer.recipeapp.repository.RecipeRepository
+import com.stargazer.recipeapp.repository.StepRepository
 import com.stargazer.recipeapp.utils.ImageStorageManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -25,6 +27,7 @@ class RecipeViewModel @Inject constructor(
     private val ingredientRepository: IngredientRepository,
     private val recipeRepository: RecipeRepository,
     private val ingredientRecipeRepository: IngredientRecipeRepository,
+    private val stepRepository: StepRepository,
     private val imageStorageManager: ImageStorageManager
 ) : ViewModel() {
 
@@ -34,16 +37,14 @@ class RecipeViewModel @Inject constructor(
     val recipe: LiveData<Recipe> get() = _recipe
     private val _ingredientQuantityList = MutableLiveData<List<IngredientQuantity>>()
     val ingredientQuantityList: LiveData<List<IngredientQuantity>> get() = _ingredientQuantityList
+    private val _stepList = MutableLiveData<List<Step>>()
+    val stepList: LiveData<List<Step>> get() = _stepList
 
-    ///
+    ///////////////////////////////////////////////////////
     private val _insertResult = MutableLiveData<Boolean>()
     val insertResult: LiveData<Boolean> get() = _insertResult
-
-    ////
     private val _updateResult = MutableLiveData<Boolean>()
     val updateResult: LiveData<Boolean> get() = _updateResult
-
-    ////
     private val _deleteResult = MutableLiveData<Boolean>()
     val deleteResult: LiveData<Boolean> get() = _deleteResult
 
@@ -54,6 +55,9 @@ class RecipeViewModel @Inject constructor(
 
             val ingredientsResult = ingredientRepository.getAllForRecipe(id)
             _ingredientQuantityList.postValue(ingredientsResult)
+
+            val stepResult = stepRepository.getAllForRecipe(id)
+            _stepList.postValue(stepResult)
         }
     }
 
@@ -61,8 +65,9 @@ class RecipeViewModel @Inject constructor(
         val recipeValue = withContext(Dispatchers.Main) { _recipe.value }
         val ingredientQuantityValue =
             withContext(Dispatchers.Main) { _ingredientQuantityList.value }
+        val stepsValue = withContext(Dispatchers.Main) { _stepList.value }
 
-        recipeValue?.let {
+        recipeValue?.let { item ->
             // add recipe
             val recipeResult = recipeRepository.insert(recipeValue)
             if (recipeResult == -1L) {
@@ -73,7 +78,7 @@ class RecipeViewModel @Inject constructor(
                 val imageLink = imageStorageManager.saveImageToInternalStorage(imageUri, fileName)
                 if (imageLink != null) {
                     recipeRepository.updateImageLink(recipeResult, imageLink)
-                    val tempRecipe = it.copy(imageLink = imageLink)
+                    val tempRecipe = item.copy(imageLink = imageLink)
                     _recipe.postValue(tempRecipe)
                 }
                 ///
@@ -84,8 +89,16 @@ class RecipeViewModel @Inject constructor(
                         IngredientRecipe(recipeResult, it.ingredient.id, it.quantity, it.unit)
                     }
                     ingredientRecipeRepository.insertAll(ingredientRecipeList)
-                    _insertResult.postValue(true)
                 }
+
+                // add steps
+                stepsValue?.let { list ->
+                    val tempList = ArrayList(list)
+                    tempList.forEach { it.recipeId = recipeResult }
+                    stepRepository.insertAll(tempList)
+                }
+
+                _insertResult.postValue(true)
             }
         }
     }
@@ -94,20 +107,21 @@ class RecipeViewModel @Inject constructor(
         val recipeValue = withContext(Dispatchers.Main) { _recipe.value }
         val ingredientQuantityValue =
             withContext(Dispatchers.Main) { _ingredientQuantityList.value }
+        val stepsValue = withContext(Dispatchers.Main) { _stepList.value }
 
-        recipeValue?.let {
+        recipeValue?.let { item ->
             // update recipe
-            val recipeResult = recipeRepository.update(recipeValue)
+            val recipeResult = recipeRepository.update(item)
             if (!recipeResult) {
                 _updateResult.postValue(false)
             } else {
                 ///
-                val fileName = "recipe_${it.id}.jpg"
+                val fileName = "recipe_${item.id}.jpg"
                 val imageLink = imageStorageManager.saveImageToInternalStorage(imageUri, fileName)
                 if (imageLink != null) {
-                    recipeRepository.updateImageLink(it.id, imageLink)
-                    val tempRecipe = it.copy(imageLink = imageLink)
-                    tempRecipe.id = it.id
+                    recipeRepository.updateImageLink(item.id, imageLink)
+                    val tempRecipe = item.copy(imageLink = imageLink)
+                    tempRecipe.id = item.id
                     _recipe.postValue(tempRecipe)
                 }
                 ///
@@ -120,8 +134,15 @@ class RecipeViewModel @Inject constructor(
                         IngredientRecipe(recipeValue.id, it.ingredient.id, it.quantity, it.unit)
                     }
                     ingredientRecipeRepository.insertAll(ingredientRecipeList)
-                    _updateResult.postValue(true)
                 }
+
+                // update steps
+                stepsValue?.let {
+                    val deleteResult = stepRepository.deleteAllByRecipe(recipeValue.id)
+                    stepRepository.insertAll(it)
+                }
+
+                _updateResult.postValue(true)
             }
         }
     }
@@ -130,10 +151,8 @@ class RecipeViewModel @Inject constructor(
         val recipeValue = withContext(Dispatchers.Main) { _recipe.value }
 
         recipeValue?.let {
-            // delete all related ingredient recipe
-            val deleteIngredientResult = ingredientRecipeRepository.deleteAllByRecipe(it.id)
             val deleteRecipeResult = recipeRepository.delete(it)
-            val deleteImageResult = imageStorageManager.deleteFile(it.imageLink)
+            val deleteImageResult = imageStorageManager.deleteImage(it.imageLink)
             _deleteResult.postValue(deleteRecipeResult)
         }
     }
@@ -163,15 +182,14 @@ class RecipeViewModel @Inject constructor(
     }
 
     fun updateRecipeData(
-        name: String?, description: String?, instructions: String?,
-        favorite: Boolean?, youtubeLink: String?, imageLink: String?
+        name: String?, description: String?, favorite: Boolean?,
+        youtubeLink: String?, imageLink: String?
     ) {
         _recipe.value?.let { currentRecipe ->
             val oldId = currentRecipe.id
             val updatedRecipe = currentRecipe.copy(
                 name = name ?: currentRecipe.name,
                 description = description ?: currentRecipe.description,
-                instructions = instructions ?: currentRecipe.instructions,
                 favorite = favorite ?: currentRecipe.favorite,
                 youtubeLink = youtubeLink ?: currentRecipe.youtubeLink,
                 imageLink = imageLink ?: currentRecipe.imageLink
@@ -184,5 +202,26 @@ class RecipeViewModel @Inject constructor(
 
     fun updateImageLink(chosenImageUri: Uri?) {
         imageUri = chosenImageUri
+    }
+
+    fun addStepData(recipeId: Long) {
+        _stepList.value?.let { currentList ->
+            val tempList = ArrayList(currentList)
+            val description = "Step ${tempList.size + 1}"
+            val newStep = Step(description, tempList.size + 1, recipeId)
+            tempList.add(newStep)
+            _stepList.value = tempList
+        }
+    }
+
+    fun deleteStepData(position: Int) {
+        _stepList.value?.let { currentList ->
+            val tempList = ArrayList(currentList)
+            tempList.removeAt(position)
+            for (index in 1..tempList.size) {
+                tempList[index - 1].order = index
+            }
+            _stepList.value = tempList
+        }
     }
 }

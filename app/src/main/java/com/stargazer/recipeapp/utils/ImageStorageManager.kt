@@ -26,7 +26,7 @@ class ImageStorageManager(private val context: Context) {
         return file.absolutePath
     }
 
-    fun deleteFile(filePath: String?): Boolean {
+    fun deleteImage(filePath: String?): Boolean {
         filePath ?: return false
         val file = File(filePath)
         return file.delete()

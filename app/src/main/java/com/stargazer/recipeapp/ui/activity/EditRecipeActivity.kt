@@ -21,6 +21,8 @@ import com.google.android.material.textfield.TextInputEditText
 import com.stargazer.recipeapp.R
 import com.stargazer.recipeapp.adapter.IngredientQuantityRVAdapter
 import com.stargazer.recipeapp.adapter.OnIngredientChangeListener
+import com.stargazer.recipeapp.adapter.OnStepChangeListener
+import com.stargazer.recipeapp.adapter.StepRVAdapter
 import com.stargazer.recipeapp.model.Ingredient
 import com.stargazer.recipeapp.utils.showToast
 import com.stargazer.recipeapp.utils.showYesNoDialog
@@ -28,19 +30,22 @@ import com.stargazer.recipeapp.viewmodel.RecipeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class EditRecipeActivity : AppCompatActivity(), OnIngredientChangeListener {
+class EditRecipeActivity : AppCompatActivity(), OnIngredientChangeListener, OnStepChangeListener {
     private val viewModel: RecipeViewModel by viewModels()
     private lateinit var imageView: ImageView
     private lateinit var inputName: TextInputEditText
     private lateinit var inputDescription: TextInputEditText
-    private lateinit var inputInstructions: TextInputEditText
     private lateinit var inputYoutubeLink: TextInputEditText
     private lateinit var buttonAddIngredient: FloatingActionButton
+    private lateinit var buttonAddStep: FloatingActionButton
     private lateinit var buttonDelete: ImageButton
     private lateinit var buttonSave: Button
     private lateinit var checkBoxFavorite: CheckBox
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var adapter: IngredientQuantityRVAdapter
+
+    private lateinit var recyclerViewIngredient: RecyclerView
+    private lateinit var adapterIngredient: IngredientQuantityRVAdapter
+    private lateinit var recyclerViewStep: RecyclerView
+    private lateinit var adapterStep: StepRVAdapter
     private var chosenImageUri: Uri? = null
     private var recipeId: Long = 0L
 
@@ -53,9 +58,9 @@ class EditRecipeActivity : AppCompatActivity(), OnIngredientChangeListener {
         imageView = findViewById(R.id.image_view)
         inputName = findViewById(R.id.input_name)
         inputDescription = findViewById(R.id.input_description)
-        inputInstructions = findViewById(R.id.input_instruction)
         inputYoutubeLink = findViewById(R.id.input_youtube_link)
-        buttonAddIngredient = findViewById(R.id.button_add)
+        buttonAddIngredient = findViewById(R.id.button_add_ingredient)
+        buttonAddStep = findViewById(R.id.button_add_step)
         checkBoxFavorite = findViewById(R.id.check_box_favorite)
         buttonDelete = findViewById(R.id.button_delete)
         buttonSave = findViewById(R.id.button_save)
@@ -95,22 +100,36 @@ class EditRecipeActivity : AppCompatActivity(), OnIngredientChangeListener {
 
 
     private fun setUpObserverAndRV() {
-        recyclerView = findViewById(R.id.recycler_view)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        adapter = IngredientQuantityRVAdapter(this, this)
-        recyclerView.adapter = adapter
+        recyclerViewIngredient = findViewById(R.id.recycler_view_ingredient)
+        recyclerViewIngredient.layoutManager = LinearLayoutManager(this)
+        adapterIngredient = IngredientQuantityRVAdapter(this, this)
+        recyclerViewIngredient.adapter = adapterIngredient
 
         viewModel.ingredientQuantityList.observe(this) { list ->
             list?.let {
-                adapter.updateList(it)
+                adapterIngredient.updateList(it)
             }
         }
+
+        ///////////////////
+
+        recyclerViewStep = findViewById(R.id.recycler_view_step)
+        recyclerViewStep.layoutManager = LinearLayoutManager(this)
+        adapterStep = StepRVAdapter(this, this)
+        recyclerViewStep.adapter = adapterStep
+
+        viewModel.stepList.observe(this) { list ->
+            list?.let {
+                adapterStep.updateList(it)
+            }
+        }
+
+        ///////////////////
 
         viewModel.recipe.observe(this) { item ->
             item?.let {
                 inputName.setText(item.name)
                 inputDescription.setText(item.description)
-                inputInstructions.setText(item.instructions)
                 checkBoxFavorite.isChecked = item.favorite
                 inputYoutubeLink.setText(item.youtubeLink)
                 if (item.imageLink == null) {
@@ -171,7 +190,7 @@ class EditRecipeActivity : AppCompatActivity(), OnIngredientChangeListener {
         }
 
         buttonAddIngredient.setOnClickListener {
-            viewModel.syncIngredientListFromRV(adapter.getIngredientList())
+            viewModel.syncIngredientListFromRV(adapterIngredient.getIngredientList())
             val intent = Intent(this, ChooseIngredientActivity::class.java)
             intent.putExtra("recipeId", recipeId)
             chooseIngredientLauncher.launch(intent)
@@ -194,6 +213,10 @@ class EditRecipeActivity : AppCompatActivity(), OnIngredientChangeListener {
                 saveData()
             }
         }
+
+        buttonAddStep.setOnClickListener {
+            viewModel.addStepData(recipeId)
+        }
     }
 
     private fun saveData() {
@@ -203,11 +226,10 @@ class EditRecipeActivity : AppCompatActivity(), OnIngredientChangeListener {
 
         val name = inputName.text.toString()
         val description = inputDescription.text.toString()
-        val instructions = inputInstructions.text.toString()
         val youtubeLink = inputYoutubeLink.text.toString()
         val favorite = checkBoxFavorite.isChecked
 
-        viewModel.updateRecipeData(name, description, instructions, favorite, youtubeLink, null)
+        viewModel.updateRecipeData(name, description, favorite, youtubeLink, null)
         viewModel.updateImageLink(chosenImageUri)
 
         if (recipeId == -1L) {
@@ -219,22 +241,20 @@ class EditRecipeActivity : AppCompatActivity(), OnIngredientChangeListener {
 
     private fun checkValidData(): Boolean {
         val name = inputName.text.toString()
-        val instructions = inputInstructions.text.toString()
 
         if (name.isEmpty()) {
             inputName.error = "Empty field!"
             return false
         }
 
-        if (instructions.isEmpty()) {
-            inputInstructions.error = "Empty field!"
-            return false
-        }
-
         return true
     }
 
-    override fun onDeleteIconClick(position: Int) {
+    override fun onDeleteIngredientClick(position: Int) {
         viewModel.deleteIngredientData(position)
+    }
+
+    override fun onDeleteStepClick(position: Int) {
+        viewModel.deleteStepData(position)
     }
 }

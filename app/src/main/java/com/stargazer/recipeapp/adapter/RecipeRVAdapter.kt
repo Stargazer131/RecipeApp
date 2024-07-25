@@ -47,7 +47,7 @@ class RecipeRVAdapter(
 
         val imageLink = allRecipes[position].imageLink
         if (imageLink == null) {
-            holder.imageView.setImageResource(R.drawable.ingredient)
+            holder.imageView.setImageResource(R.drawable.recipe)
         } else {
             holder.imageView.setImageBitmap(BitmapFactory.decodeFile(imageLink))
         }

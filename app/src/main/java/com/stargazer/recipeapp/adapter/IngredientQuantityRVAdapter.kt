@@ -62,7 +62,7 @@ class IngredientQuantityRVAdapter(
                 "Confirm delete",
                 "Are you sure you want to delete this ingredient?"
             ) {
-                ingredientChangeListener.onDeleteIconClick(position)
+                ingredientChangeListener.onDeleteIngredientClick(position)
             }
         }
 
@@ -123,5 +123,5 @@ class IngredientQuantityRVAdapter(
 interface OnIngredientChangeListener {
     //    fun onUnitChanged(position: Int, unit: String)
 //    fun onQuantityChanged(position: Int, quantity: Double)
-    fun onDeleteIconClick(position: Int)
+    fun onDeleteIngredientClick(position: Int)
 }

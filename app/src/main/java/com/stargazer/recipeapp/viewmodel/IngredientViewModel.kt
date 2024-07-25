@@ -27,15 +27,11 @@ class IngredientViewModel @Inject constructor(
     private val _ingredient = MutableLiveData<Ingredient>()
     val ingredient: LiveData<Ingredient> get() = _ingredient
 
-    ///
+    ///////////////////////////////////////////////////////
     private val _insertResult = MutableLiveData<Boolean>()
     val insertResult: LiveData<Boolean> get() = _insertResult
-
-    ////
     private val _updateResult = MutableLiveData<Boolean>()
     val updateResult: LiveData<Boolean> get() = _updateResult
-
-    ////
     private val _deleteResult = MutableLiveData<Boolean>()
     val deleteResult: LiveData<Boolean> get() = _deleteResult
 
@@ -101,10 +97,8 @@ class IngredientViewModel @Inject constructor(
     fun deleteIngredientFromDB() = viewModelScope.launch(Dispatchers.IO) {
         val ingredientValue = withContext(Dispatchers.Main) { _ingredient.value }
         ingredientValue?.let {
-            // delete all related ingredient recipe
-            val deleteRecipeResult = ingredientRecipeRepository.deleteAllByIngredient(it.id)
             val result = ingredientRepository.delete(it)
-            val deleteImageResult = imageStorageManager.deleteFile(it.imageLink)
+            val deleteImageResult = imageStorageManager.deleteImage(it.imageLink)
             _deleteResult.postValue(result)
         }
     }

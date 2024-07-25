@@ -6,10 +6,12 @@ import androidx.room.Room
 import com.stargazer.recipeapp.dao.IngredientDAO
 import com.stargazer.recipeapp.dao.IngredientRecipeDAO
 import com.stargazer.recipeapp.dao.RecipeDAO
+import com.stargazer.recipeapp.dao.StepDAO
 import com.stargazer.recipeapp.model.AppDatabase
 import com.stargazer.recipeapp.repository.IngredientRecipeRepository
 import com.stargazer.recipeapp.repository.IngredientRepository
 import com.stargazer.recipeapp.repository.RecipeRepository
+import com.stargazer.recipeapp.repository.StepRepository
 import com.stargazer.recipeapp.utils.ImageStorageManager
 import dagger.Module
 import dagger.Provides
@@ -33,6 +35,16 @@ object AppModule {
         return Room.databaseBuilder(app, AppDatabase::class.java, "recipe_database")
             .fallbackToDestructiveMigration()
             .build()
+    }
+
+    @Provides
+    fun provideStepDAO(db: AppDatabase): StepDAO {
+        return db.getStepDAO()
+    }
+
+    @Provides
+    fun provideStepRepository(stepDAO: StepDAO): StepRepository {
+        return StepRepository(stepDAO)
     }
 
     @Provides
@@ -64,5 +76,4 @@ object AppModule {
     fun provideIngredientRecipeRepository(ingredientRecipeDAO: IngredientRecipeDAO): IngredientRecipeRepository {
         return IngredientRecipeRepository(ingredientRecipeDAO)
     }
-
 }

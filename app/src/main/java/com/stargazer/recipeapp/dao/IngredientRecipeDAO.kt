@@ -12,7 +12,7 @@ import com.stargazer.recipeapp.model.IngredientRecipe
 @Dao
 interface IngredientRecipeDAO {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(ingredientRecipe: IngredientRecipe): Long
+    suspend fun insert(ingredientRecipe: IngredientRecipe)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAll(ingredientRecipes: List<IngredientRecipe>)
