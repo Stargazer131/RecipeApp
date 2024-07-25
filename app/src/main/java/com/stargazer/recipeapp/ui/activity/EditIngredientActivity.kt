@@ -80,11 +80,9 @@ class EditIngredientActivity : AppCompatActivity() {
                 inputName.setText(item.name)
                 inputDescription.setText(item.description)
                 if (item.imageLink == null) {
-                    showToast(this, "Cant load image")
                     imageView.setImageResource(R.drawable.ingredient)
                 } else {
                     imageView.setImageBitmap(BitmapFactory.decodeFile(item.imageLink))
-                    showToast(this, "load image")
                 }
             }
         }

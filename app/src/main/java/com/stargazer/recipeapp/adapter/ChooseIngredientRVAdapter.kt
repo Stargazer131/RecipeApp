@@ -2,6 +2,7 @@ package com.stargazer.recipeapp.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,6 +42,13 @@ class ChooseIngredientRVAdapter(
         holder.textName.text = allIngredients[position].first.name
         holder.checkBox.setOnCheckedChangeListener { _, isChecked ->
             allIngredients[position].second = isChecked
+        }
+
+        val imageLink = allIngredients[position].first.imageLink
+        if (imageLink == null) {
+            holder.imageView.setImageResource(R.drawable.ingredient)
+        } else {
+            holder.imageView.setImageBitmap(BitmapFactory.decodeFile(imageLink))
         }
     }
 

@@ -1,5 +1,6 @@
 package com.stargazer.recipeapp.viewmodel
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,6 +12,7 @@ import com.stargazer.recipeapp.model.Recipe
 import com.stargazer.recipeapp.repository.IngredientRecipeRepository
 import com.stargazer.recipeapp.repository.IngredientRepository
 import com.stargazer.recipeapp.repository.RecipeRepository
+import com.stargazer.recipeapp.utils.ImageStorageManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -22,9 +24,11 @@ import javax.inject.Inject
 class RecipeViewModel @Inject constructor(
     private val ingredientRepository: IngredientRepository,
     private val recipeRepository: RecipeRepository,
-    private val ingredientRecipeRepository: IngredientRecipeRepository
+    private val ingredientRecipeRepository: IngredientRecipeRepository,
+    private val imageStorageManager: ImageStorageManager
 ) : ViewModel() {
 
+    private var imageUri: Uri? = null
     val allRecipes = recipeRepository.getAll()
     private val _recipe = MutableLiveData<Recipe>()
     val recipe: LiveData<Recipe> get() = _recipe
@@ -64,6 +68,16 @@ class RecipeViewModel @Inject constructor(
             if (recipeResult == -1L) {
                 _insertResult.postValue(false)
             } else {
+                ///
+                val fileName = "recipe_${recipeResult}.jpg"
+                val imageLink = imageStorageManager.saveImageToInternalStorage(imageUri, fileName)
+                if (imageLink != null) {
+                    recipeRepository.updateImageLink(recipeResult, imageLink)
+                    val tempRecipe = it.copy(imageLink = imageLink)
+                    _recipe.postValue(tempRecipe)
+                }
+                ///
+
                 // add ingredients
                 ingredientQuantityValue?.let {
                     val ingredientRecipeList = ingredientQuantityValue.map {
@@ -87,6 +101,17 @@ class RecipeViewModel @Inject constructor(
             if (!recipeResult) {
                 _updateResult.postValue(false)
             } else {
+                ///
+                val fileName = "recipe_${it.id}.jpg"
+                val imageLink = imageStorageManager.saveImageToInternalStorage(imageUri, fileName)
+                if (imageLink != null) {
+                    recipeRepository.updateImageLink(it.id, imageLink)
+                    val tempRecipe = it.copy(imageLink = imageLink)
+                    tempRecipe.id = it.id
+                    _recipe.postValue(tempRecipe)
+                }
+                ///
+
                 // update ingredients
                 ingredientQuantityValue?.let {
                     // delete all old ingredients
@@ -108,6 +133,7 @@ class RecipeViewModel @Inject constructor(
             // delete all related ingredient recipe
             val deleteIngredientResult = ingredientRecipeRepository.deleteAllByRecipe(it.id)
             val deleteRecipeResult = recipeRepository.delete(it)
+            val deleteImageResult = imageStorageManager.deleteFile(it.imageLink)
             _deleteResult.postValue(deleteRecipeResult)
         }
     }
@@ -154,5 +180,9 @@ class RecipeViewModel @Inject constructor(
             updatedRecipe.id = oldId
             _recipe.value = updatedRecipe
         }
+    }
+
+    fun updateImageLink(chosenImageUri: Uri?) {
+        imageUri = chosenImageUri
     }
 }

@@ -2,6 +2,7 @@ package com.stargazer.recipeapp.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -47,6 +48,13 @@ class IngredientQuantityRVAdapter(
         holder.textName.text = allIngredientQuantity[position].ingredient.name
         holder.inputQuantity.setText(quantityToString(allIngredientQuantity[position].quantity))
         holder.inputUnit.setText(allIngredientQuantity[position].unit)
+
+        val imageLink = allIngredientQuantity[position].ingredient.imageLink
+        if (imageLink == null) {
+            holder.imageView.setImageResource(R.drawable.ingredient)
+        } else {
+            holder.imageView.setImageBitmap(BitmapFactory.decodeFile(imageLink))
+        }
 
         holder.buttonDelete.setOnClickListener {
             showYesNoDialog(

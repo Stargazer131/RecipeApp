@@ -2,16 +2,20 @@ package com.stargazer.recipeapp.ui.activity
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.ImageButton
 import android.widget.ImageView
+import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
 import com.stargazer.recipeapp.R
@@ -35,9 +39,11 @@ class EditRecipeActivity : AppCompatActivity(), OnIngredientChangeListener {
     private lateinit var buttonDelete: ImageButton
     private lateinit var buttonSave: Button
     private lateinit var checkBoxFavorite: CheckBox
-    private var recipeId: Long = 0L
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: IngredientQuantityRVAdapter
+    private var chosenImageUri: Uri? = null
+    private var recipeId: Long = 0L
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,10 +61,36 @@ class EditRecipeActivity : AppCompatActivity(), OnIngredientChangeListener {
         buttonSave = findViewById(R.id.button_save)
 
         viewModel.setRecipeData(recipeId)
-        setUpLauncher()
+        setUpChooseIngredientLauncher()
         setUpObserverAndRV()
         setUpButton()
         setUpCRUDObserver()
+        setUpImagePicker()
+    }
+
+    private fun setUpImagePicker() {
+        val startForProfileImageResult =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+                val resultCode = result.resultCode
+                val data = result.data
+
+                if (resultCode == Activity.RESULT_OK) {
+                    //Image Uri will not be null for RESULT_OK
+                    val fileUri = data?.data!!
+                    chosenImageUri = fileUri
+                    imageView.setImageURI(fileUri)
+                }
+            }
+
+        imageView.setOnClickListener {
+            ImagePicker.with(this)
+                .cropSquare()
+                .compress(2048) //Final image size
+                .maxResultSize(1080, 1080)  //Final image resolution
+                .createIntent { intent ->
+                    startForProfileImageResult.launch(intent)
+                }
+        }
     }
 
 
@@ -81,6 +113,11 @@ class EditRecipeActivity : AppCompatActivity(), OnIngredientChangeListener {
                 inputInstructions.setText(item.instructions)
                 checkBoxFavorite.isChecked = item.favorite
                 inputYoutubeLink.setText(item.youtubeLink)
+                if (item.imageLink == null) {
+                    imageView.setImageResource(R.drawable.recipe)
+                } else {
+                    imageView.setImageBitmap(BitmapFactory.decodeFile(item.imageLink))
+                }
             }
         }
     }
@@ -121,7 +158,7 @@ class EditRecipeActivity : AppCompatActivity(), OnIngredientChangeListener {
         }
     }
 
-    private fun setUpLauncher() {
+    private fun setUpChooseIngredientLauncher() {
         val chooseIngredientLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
@@ -171,6 +208,8 @@ class EditRecipeActivity : AppCompatActivity(), OnIngredientChangeListener {
         val favorite = checkBoxFavorite.isChecked
 
         viewModel.updateRecipeData(name, description, instructions, favorite, youtubeLink, null)
+        viewModel.updateImageLink(chosenImageUri)
+
         if (recipeId == -1L) {
             viewModel.insertRecipeToDB()
         } else {

@@ -3,6 +3,7 @@ package com.stargazer.recipeapp.adapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -42,6 +43,13 @@ class RecipeRVAdapter(
             val intent = Intent(context, EditRecipeActivity::class.java)
             intent.putExtra("recipeId", allRecipes[position].id)
             context.startActivity(intent)
+        }
+
+        val imageLink = allRecipes[position].imageLink
+        if (imageLink == null) {
+            holder.imageView.setImageResource(R.drawable.ingredient)
+        } else {
+            holder.imageView.setImageBitmap(BitmapFactory.decodeFile(imageLink))
         }
     }
 

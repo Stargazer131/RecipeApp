@@ -20,6 +20,10 @@ class RecipeRepository @Inject constructor(private val recipeDAO: RecipeDAO) {
         return recipeDAO.update(recipe) > 0
     }
 
+    suspend fun updateImageLink(recipeId: Long, imageLink: String): Boolean {
+        return recipeDAO.updateImageLink(recipeId, imageLink) > 0
+    }
+
     fun getAll(): LiveData<List<Recipe>> {
         return recipeDAO.getAll()
     }

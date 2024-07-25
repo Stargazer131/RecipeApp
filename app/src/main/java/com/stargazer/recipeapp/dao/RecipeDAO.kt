@@ -17,6 +17,9 @@ interface RecipeDAO {
     @Update
     suspend fun update(recipe: Recipe): Int
 
+    @Query("UPDATE Recipe SET imageLink = :imageLink WHERE id = :recipeId")
+    suspend fun updateImageLink(recipeId: Long, imageLink: String): Int
+
     @Delete
     suspend fun delete(recipe: Recipe): Int
 
