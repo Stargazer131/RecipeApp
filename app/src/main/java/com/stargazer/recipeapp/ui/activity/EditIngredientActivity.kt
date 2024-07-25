@@ -1,12 +1,18 @@
 package com.stargazer.recipeapp.ui.activity
 
+import android.app.Activity
 import android.content.Intent
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.textfield.TextInputEditText
 import com.stargazer.recipeapp.R
 import com.stargazer.recipeapp.utils.showToast
@@ -22,6 +28,7 @@ class EditIngredientActivity : AppCompatActivity() {
     private lateinit var inputDescription: TextInputEditText
     private lateinit var buttonDelete: ImageButton
     private lateinit var buttonSave: Button
+    private var chosenImageUri: Uri? = null
     private var ingredientId: Long = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,6 +44,32 @@ class EditIngredientActivity : AppCompatActivity() {
 
         setUpButton()
         setUpObserver()
+        setUpImagePicker()
+    }
+
+    private fun setUpImagePicker() {
+        val startForProfileImageResult =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+                val resultCode = result.resultCode
+                val data = result.data
+
+                if (resultCode == Activity.RESULT_OK) {
+                    //Image Uri will not be null for RESULT_OK
+                    val fileUri = data?.data!!
+                    chosenImageUri = fileUri
+                    imageView.setImageURI(fileUri)
+                }
+            }
+
+        imageView.setOnClickListener {
+            ImagePicker.with(this)
+                .cropSquare()
+                .compress(2048) //Final image size
+                .maxResultSize(1080, 1080)  //Final image resolution
+                .createIntent { intent ->
+                    startForProfileImageResult.launch(intent)
+                }
+        }
     }
 
     private fun setUpObserver() {
@@ -46,6 +79,13 @@ class EditIngredientActivity : AppCompatActivity() {
             item?.let {
                 inputName.setText(item.name)
                 inputDescription.setText(item.description)
+                if (item.imageLink == null) {
+                    showToast(this, "Cant load image")
+                    imageView.setImageResource(R.drawable.ingredient)
+                } else {
+                    imageView.setImageBitmap(BitmapFactory.decodeFile(item.imageLink))
+                    showToast(this, "load image")
+                }
             }
         }
 
@@ -110,6 +150,7 @@ class EditIngredientActivity : AppCompatActivity() {
         val name = inputName.text.toString()
         val description = inputDescription.text.toString()
         viewModel.updateIngredientData(name, description, null)
+        viewModel.updateImageLink(chosenImageUri)
 
         if (ingredientId == -1L) {
             viewModel.insertIngredientToDB()

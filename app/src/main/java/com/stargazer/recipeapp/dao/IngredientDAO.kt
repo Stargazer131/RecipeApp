@@ -19,6 +19,9 @@ interface IngredientDAO {
     @Update
     suspend fun update(ingredient: Ingredient): Int
 
+    @Query("UPDATE Ingredient SET imageLink = :imageLink WHERE id = :ingredientId")
+    suspend fun updateImageLink(ingredientId: Long, imageLink: String): Int
+
     @Delete
     suspend fun delete(ingredient: Ingredient): Int
 
@@ -51,4 +54,7 @@ interface IngredientDAO {
     """
     )
     suspend fun getAllNotInRecipe(recipeId: Long): List<Ingredient>
+
+    @Query("SELECT * FROM Ingredient WHERE name LIKE '%' || :keyword || '%'")
+    suspend fun getAllByName(keyword: String): List<Ingredient>
 }

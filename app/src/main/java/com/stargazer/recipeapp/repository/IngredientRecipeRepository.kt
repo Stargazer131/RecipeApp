@@ -31,6 +31,10 @@ class IngredientRecipeRepository @Inject constructor(private val ingredientRecip
         return ingredientRecipeDAO.deleteAllByRecipe(recipeId)
     }
 
+    suspend fun deleteAllByIngredient(ingredientId: Long): Int {
+        return ingredientRecipeDAO.deleteAllByIngredient(ingredientId)
+    }
+
 //    fun getAllByRecipeId(recipeId: Long): LiveData<List<IngredientRecipe>> {
 //        return ingredientRecipeDAO.getAllByRecipeId(recipeId)
 //    }

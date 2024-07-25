@@ -38,6 +38,7 @@ class ChooseIngredientActivity : AppCompatActivity() {
 
         setUpRecyclerView()
         setUpChooseButton()
+        setUpSearch()
     }
 
     private fun setUpRecyclerView() {
@@ -54,7 +55,7 @@ class ChooseIngredientActivity : AppCompatActivity() {
             }
         }
 
-        viewModel.setSearchIngredientData(recipeId)
+        viewModel.setIngredientsData(recipeId)
     }
 
     private fun setUpChooseButton() {
@@ -70,6 +71,13 @@ class ChooseIngredientActivity : AppCompatActivity() {
                     finish()
                 }
             }
+        }
+    }
+
+    private fun setUpSearch() {
+        buttonSearch.setOnClickListener {
+            val keyword = inputKeyword.text.toString()
+            viewModel.setSearchIngredientsData(keyword, recipeId)
         }
     }
 }

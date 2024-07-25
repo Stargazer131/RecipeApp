@@ -26,15 +26,9 @@ interface IngredientRecipeDAO {
     @Query("DELETE FROM IngredientRecipe WHERE recipeId = :recipeId")
     suspend fun deleteAllByRecipe(recipeId: Long): Int
 
+    @Query("DELETE FROM IngredientRecipe WHERE ingredientId = :ingredientId")
+    suspend fun deleteAllByIngredient(ingredientId: Long): Int
+
     @Query("SELECT * FROM IngredientRecipe")
     fun getAll(): LiveData<List<IngredientRecipe>>
-
-//    @Query(
-//        """
-//        SELECT * FROM IngredientRecipe
-//        WHERE IngredientRecipe.recipeId = :recipeId
-//        order by ingredientId ASC
-//        """
-//    )
-//    fun getAllByRecipeId(recipeId: Long): LiveData<List<IngredientRecipe>>
 }

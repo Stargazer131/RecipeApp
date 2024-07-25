@@ -105,6 +105,7 @@ class RecipeViewModel @Inject constructor(
         val recipeValue = withContext(Dispatchers.Main) { _recipe.value }
 
         recipeValue?.let {
+            // delete all related ingredient recipe
             val deleteIngredientResult = ingredientRecipeRepository.deleteAllByRecipe(it.id)
             val deleteRecipeResult = recipeRepository.delete(it)
             _deleteResult.postValue(deleteRecipeResult)

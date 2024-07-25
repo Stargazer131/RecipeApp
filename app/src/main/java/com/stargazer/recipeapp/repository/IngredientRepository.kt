@@ -16,6 +16,10 @@ class IngredientRepository @Inject constructor(private val ingredientDAO: Ingred
         return ingredientDAO.update(ingredient) > 0
     }
 
+    suspend fun updateImageLink(ingredientId: Long, imageLink: String): Boolean {
+        return ingredientDAO.updateImageLink(ingredientId, imageLink) > 0
+    }
+
     suspend fun delete(ingredient: Ingredient): Boolean {
         return ingredientDAO.delete(ingredient) > 0
     }
@@ -34,5 +38,9 @@ class IngredientRepository @Inject constructor(private val ingredientDAO: Ingred
 
     suspend fun getAllNotInRecipe(recipeId: Long): List<Ingredient> {
         return ingredientDAO.getAllNotInRecipe(recipeId)
+    }
+
+    suspend fun getAllByName(keyword: String): List<Ingredient> {
+        return ingredientDAO.getAllByName(keyword)
     }
 }
