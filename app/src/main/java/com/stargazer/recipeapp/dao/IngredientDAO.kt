@@ -55,6 +55,6 @@ interface IngredientDAO {
     )
     suspend fun getAllNotInRecipe(recipeId: Long): List<Ingredient>
 
-    @Query("SELECT * FROM Ingredient WHERE name LIKE '%' || :keyword || '%'")
+    @Query("SELECT * FROM Ingredient WHERE name LIKE '%' || :keyword || '%' ORDER BY name ASC")
     suspend fun getAllByName(keyword: String): List<Ingredient>
 }

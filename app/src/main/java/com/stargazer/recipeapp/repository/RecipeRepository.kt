@@ -31,4 +31,12 @@ class RecipeRepository @Inject constructor(private val recipeDAO: RecipeDAO) {
     suspend fun getById(recipeId: Long): Recipe? {
         return recipeDAO.getById(recipeId)
     }
+
+    suspend fun getAllByName(keyword: String): List<Recipe> {
+        return recipeDAO.getAllByName(keyword)
+    }
+
+    suspend fun getAllByDateRange(startDate: Date, endDate: Date): List<Recipe> {
+        return recipeDAO.getAllByDateRange(startDate, endDate)
+    }
 }

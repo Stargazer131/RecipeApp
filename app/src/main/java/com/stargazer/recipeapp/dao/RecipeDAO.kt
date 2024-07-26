@@ -8,6 +8,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.stargazer.recipeapp.model.Recipe
+import java.util.Date
 
 @Dao
 interface RecipeDAO {
@@ -28,4 +29,10 @@ interface RecipeDAO {
 
     @Query("SELECT * FROM Recipe")
     fun getAll(): LiveData<List<Recipe>>
+
+    @Query("SELECT * FROM Recipe WHERE name LIKE '%' || :keyword || '%' ORDER BY name ASC")
+    suspend fun getAllByName(keyword: String): List<Recipe>
+
+    @Query("SELECT * FROM Recipe WHERE updatedTimestamp BETWEEN :startDate AND :endDate ORDER BY updatedTimestamp ASC")
+    suspend fun getAllByDateRange(startDate: Date, endDate: Date): List<Recipe>
 }

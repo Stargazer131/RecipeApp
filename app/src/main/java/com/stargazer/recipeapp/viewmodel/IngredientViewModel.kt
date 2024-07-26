@@ -56,50 +56,57 @@ class IngredientViewModel @Inject constructor(
         }
     }
 
-    fun insertIngredientToDB() = viewModelScope.launch(Dispatchers.IO) {
-        val ingredientValue = withContext(Dispatchers.Main) { _ingredient.value }
-        ingredientValue?.let {
-            val result = ingredientRepository.insert(it)
-            if (result != -1L) {
+    fun insertIngredientToDB() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val ingredientValue = withContext(Dispatchers.Main) { _ingredient.value }
+            ingredientValue?.let {
+                val result = ingredientRepository.insert(it)
+                if (result != -1L) {
+                    ///
+                    val fileName = "ingredient_${result}.jpg"
+                    val imageLink =
+                        imageStorageManager.saveImageToInternalStorage(imageUri, fileName)
+                    if (imageLink != null) {
+                        ingredientRepository.updateImageLink(result, imageLink)
+                        val tempIngredient = it.copy(imageLink = imageLink)
+                        _ingredient.postValue(tempIngredient)
+                    }
+                    ///
+                }
+                _insertResult.postValue(result != -1L)
+            }
+        }
+    }
+
+    fun updateIngredientToDB() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val ingredientValue = withContext(Dispatchers.Main) { _ingredient.value }
+            ingredientValue?.let {
+                val result = ingredientRepository.update(it)
+                _updateResult.postValue(result)
+
                 ///
-                val fileName = "ingredient_${result}.jpg"
+                val fileName = "ingredient_${it.id}.jpg"
                 val imageLink = imageStorageManager.saveImageToInternalStorage(imageUri, fileName)
                 if (imageLink != null) {
-                    ingredientRepository.updateImageLink(result, imageLink)
+                    ingredientRepository.updateImageLink(it.id, imageLink)
                     val tempIngredient = it.copy(imageLink = imageLink)
+                    tempIngredient.id = it.id
                     _ingredient.postValue(tempIngredient)
                 }
                 ///
             }
-            _insertResult.postValue(result != -1L)
         }
     }
 
-    fun updateIngredientToDB() = viewModelScope.launch(Dispatchers.IO) {
-        val ingredientValue = withContext(Dispatchers.Main) { _ingredient.value }
-        ingredientValue?.let {
-            val result = ingredientRepository.update(it)
-            _updateResult.postValue(result)
-
-            ///
-            val fileName = "ingredient_${it.id}.jpg"
-            val imageLink = imageStorageManager.saveImageToInternalStorage(imageUri, fileName)
-            if (imageLink != null) {
-                ingredientRepository.updateImageLink(it.id, imageLink)
-                val tempIngredient = it.copy(imageLink = imageLink)
-                tempIngredient.id = it.id
-                _ingredient.postValue(tempIngredient)
+    fun deleteIngredientFromDB() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val ingredientValue = withContext(Dispatchers.Main) { _ingredient.value }
+            ingredientValue?.let {
+                val result = ingredientRepository.delete(it)
+                val deleteImageResult = imageStorageManager.deleteImage(it.imageLink)
+                _deleteResult.postValue(result)
             }
-            ///
-        }
-    }
-
-    fun deleteIngredientFromDB() = viewModelScope.launch(Dispatchers.IO) {
-        val ingredientValue = withContext(Dispatchers.Main) { _ingredient.value }
-        ingredientValue?.let {
-            val result = ingredientRepository.delete(it)
-            val deleteImageResult = imageStorageManager.deleteImage(it.imageLink)
-            _deleteResult.postValue(result)
         }
     }
 

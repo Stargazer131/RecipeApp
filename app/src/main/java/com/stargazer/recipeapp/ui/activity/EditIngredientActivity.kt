@@ -113,6 +113,7 @@ class EditIngredientActivity : AppCompatActivity() {
                     if (it) {
                         val intent = Intent(this, MainActivity::class.java)
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                        intent.putExtra("selectedView", "ingredient")
                         startActivity(intent)
                     } else {
                         showToast(this, "Delete fail")

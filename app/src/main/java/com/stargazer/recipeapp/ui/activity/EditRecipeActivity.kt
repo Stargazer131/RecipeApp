@@ -38,6 +38,7 @@ class EditRecipeActivity : AppCompatActivity(), OnIngredientChangeListener, OnSt
     private lateinit var inputYoutubeLink: TextInputEditText
     private lateinit var buttonAddIngredient: FloatingActionButton
     private lateinit var buttonAddStep: FloatingActionButton
+    private lateinit var buttonYoutube: FloatingActionButton
     private lateinit var buttonDelete: ImageButton
     private lateinit var buttonSave: Button
     private lateinit var checkBoxFavorite: CheckBox
@@ -61,6 +62,7 @@ class EditRecipeActivity : AppCompatActivity(), OnIngredientChangeListener, OnSt
         inputYoutubeLink = findViewById(R.id.input_youtube_link)
         buttonAddIngredient = findViewById(R.id.button_add_ingredient)
         buttonAddStep = findViewById(R.id.button_add_step)
+        buttonYoutube = findViewById(R.id.button_youtube)
         checkBoxFavorite = findViewById(R.id.check_box_favorite)
         buttonDelete = findViewById(R.id.button_delete)
         buttonSave = findViewById(R.id.button_save)
@@ -168,6 +170,7 @@ class EditRecipeActivity : AppCompatActivity(), OnIngredientChangeListener, OnSt
                     if (it) {
                         val intent = Intent(this, MainActivity::class.java)
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                        intent.putExtra("selectedView", "recipe")
                         startActivity(intent)
                     } else {
                         showToast(this, "Delete fail")
@@ -216,6 +219,16 @@ class EditRecipeActivity : AppCompatActivity(), OnIngredientChangeListener, OnSt
 
         buttonAddStep.setOnClickListener {
             viewModel.addStepData(recipeId)
+        }
+
+        buttonYoutube.setOnClickListener {
+            val youtubeUrl = inputYoutubeLink.text.toString()
+            try {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(youtubeUrl))
+                startActivity(intent)
+            } catch (_: Exception) {
+
+            }
         }
     }
 

@@ -35,4 +35,15 @@ class SearchIngredientViewModel @Inject constructor(
             _ingredientList.postValue(result)
         }
     }
+
+    fun setSearchIngredientsData(keywordName: String, reverseOrder: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            var result = ingredientRepository.getAllByName(keywordName)
+            if (reverseOrder) {
+                result = result.reversed()
+            }
+
+            _ingredientList.postValue(result)
+        }
+    }
 }

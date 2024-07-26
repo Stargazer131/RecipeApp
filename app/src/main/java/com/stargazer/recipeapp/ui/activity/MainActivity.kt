@@ -4,6 +4,7 @@ package com.stargazer.recipeapp.ui.activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.FrameLayout
+import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -19,6 +20,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var bottomNavigationView: BottomNavigationView
     private lateinit var fragmentContainer: FrameLayout
     private lateinit var buttonAdd: FloatingActionButton
+    private lateinit var buttonSearch: ImageButton
+    private lateinit var selectedView: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -26,12 +30,15 @@ class MainActivity : AppCompatActivity() {
         bottomNavigationView = findViewById(R.id.bottom_navigation)
         fragmentContainer = findViewById(R.id.fragment_container)
         buttonAdd = findViewById(R.id.button_add)
+        buttonSearch = findViewById(R.id.button_search)
+        selectedView = intent.getStringExtra("selectedView") ?: "recipe"
 
         setupNavigation()
-        setUpButton()
+        setUpAddButton()
+        setUpSearchButton()
     }
 
-    private fun setUpButton() {
+    private fun setUpAddButton() {
         buttonAdd.setOnClickListener {
             when (bottomNavigationView.selectedItemId) {
                 R.id.menu_recipe -> {
@@ -41,6 +48,24 @@ class MainActivity : AppCompatActivity() {
 
                 R.id.menu_ingredient -> {
                     val intent = Intent(this, EditIngredientActivity::class.java)
+                    startActivity(intent)
+                }
+
+                else -> {}
+            }
+        }
+    }
+
+    private fun setUpSearchButton() {
+        buttonSearch.setOnClickListener {
+            when (bottomNavigationView.selectedItemId) {
+                R.id.menu_recipe -> {
+                    val intent = Intent(this, SearchRecipeActivity::class.java)
+                    startActivity(intent)
+                }
+
+                R.id.menu_ingredient -> {
+                    val intent = Intent(this, SearchIngredientActivity::class.java)
                     startActivity(intent)
                 }
 
@@ -66,7 +91,11 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        bottomNavigationView.selectedItemId = R.id.menu_recipe
+        if (selectedView == "ingredient") {
+            bottomNavigationView.selectedItemId = R.id.menu_ingredient
+        } else {
+            bottomNavigationView.selectedItemId = R.id.menu_recipe
+        }
     }
 
     private fun loadFragment(fragment: Fragment) {

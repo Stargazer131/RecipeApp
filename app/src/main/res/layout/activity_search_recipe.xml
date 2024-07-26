@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.activity.SearchRecipeActivity">
+
+    <TextView
+        android:id="@+id/text_search_criteria"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="15dp"
+        android:text="Search by"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Spinner
+        android:id="@+id/spinner_search_criteria"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:entries="@array/recipe_search_criteria"
+        app:layout_constraintBottom_toBottomOf="@id/text_search_criteria"
+        app:layout_constraintStart_toEndOf="@id/text_search_criteria"
+        app:layout_constraintTop_toTopOf="@id/text_search_criteria" />
+
+    <TextView
+        android:id="@+id/text_sort_criteria"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:text="Sort by"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="@id/text_search_criteria"
+        app:layout_constraintTop_toTopOf="@id/text_search_criteria" />
+
+    <Spinner
+        android:id="@+id/spinner_sort_criteria"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:entries="@array/recipe_search_criteria"
+        app:layout_constraintBottom_toBottomOf="@id/text_sort_criteria"
+        app:layout_constraintStart_toEndOf="@id/text_sort_criteria"
+        app:layout_constraintTop_toTopOf="@id/text_sort_criteria" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="10dp"
+        android:text="Descending"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toTopOf="@id/switch_button"
+        app:layout_constraintEnd_toEndOf="@id/switch_button"
+        app:layout_constraintStart_toStartOf="@id/switch_button" />
+
+    <com.google.android.material.materialswitch.MaterialSwitch
+        android:id="@+id/switch_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="70dp"
+        android:textOff="Ascending"
+        android:textOn="Descending"
+        app:layout_constraintBottom_toBottomOf="@id/spinner_sort_criteria"
+        app:layout_constraintStart_toEndOf="@id/spinner_sort_criteria"
+        app:layout_constraintTop_toTopOf="@id/spinner_sort_criteria" />
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/input_layout_keyword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="50dp"
+        android:hint="Keyword"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/text_sort_criteria">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/input_keyword"
+            android:layout_width="320dp"
+            android:layout_height="wrap_content"
+            android:inputType="text" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/input_layout_start_day"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="50dp"
+        android:hint="Start Day"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/text_sort_criteria">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/input_start_day"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:inputType="text" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/input_layout_end_day"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="50dp"
+        android:hint="End Day"
+        app:layout_constraintStart_toEndOf="@id/input_layout_start_day"
+        app:layout_constraintTop_toTopOf="@id/text_sort_criteria">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/input_end_day"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:inputType="text" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <ImageButton
+        android:id="@+id/button_search"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="10dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_search"
+        app:layout_constraintBottom_toBottomOf="@id/input_layout_keyword"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/input_layout_keyword"
+        app:tint="@color/violet" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Favorite"
+        android:textSize="15sp"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintBottom_toBottomOf="@id/spinner_favorite"
+        app:layout_constraintTop_toTopOf="@id/spinner_favorite"
+        app:layout_constraintEnd_toStartOf="@id/spinner_favorite" />
+
+    <Spinner
+        android:entries="@array/favorite_choices"
+        android:id="@+id/spinner_favorite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/button_search" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="5dp"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/spinner_favorite" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

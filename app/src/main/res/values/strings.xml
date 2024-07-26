@@ -1,5 +1,19 @@
 <resources>
     <string name="app_name">RecipeApp</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string-array name="ingredient_search_criteria">
+        <item>Name</item>
+    </string-array>
+
+    <string-array name="recipe_search_criteria">
+        <item>Name</item>
+        <item>Updated Time</item>
+    </string-array>
+
+    <string-array name="favorite_choices">
+        <item>All</item>
+        <item>Yes</item>
+        <item>No</item>
+    </string-array>
 </resources>

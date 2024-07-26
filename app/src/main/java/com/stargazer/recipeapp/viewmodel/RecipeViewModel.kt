@@ -61,99 +61,107 @@ class RecipeViewModel @Inject constructor(
         }
     }
 
-    fun insertRecipeToDB() = viewModelScope.launch(Dispatchers.IO) {
-        val recipeValue = withContext(Dispatchers.Main) { _recipe.value }
-        val ingredientQuantityValue =
-            withContext(Dispatchers.Main) { _ingredientQuantityList.value }
-        val stepsValue = withContext(Dispatchers.Main) { _stepList.value }
+    fun insertRecipeToDB() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val recipeValue = withContext(Dispatchers.Main) { _recipe.value }
+            val ingredientQuantityValue =
+                withContext(Dispatchers.Main) { _ingredientQuantityList.value }
+            val stepsValue = withContext(Dispatchers.Main) { _stepList.value }
 
-        recipeValue?.let { item ->
-            // add recipe
-            val recipeResult = recipeRepository.insert(recipeValue)
-            if (recipeResult == -1L) {
-                _insertResult.postValue(false)
-            } else {
-                ///
-                val fileName = "recipe_${recipeResult}.jpg"
-                val imageLink = imageStorageManager.saveImageToInternalStorage(imageUri, fileName)
-                if (imageLink != null) {
-                    recipeRepository.updateImageLink(recipeResult, imageLink)
-                    val tempRecipe = item.copy(imageLink = imageLink)
-                    _recipe.postValue(tempRecipe)
-                }
-                ///
-
-                // add ingredients
-                ingredientQuantityValue?.let {
-                    val ingredientRecipeList = ingredientQuantityValue.map {
-                        IngredientRecipe(recipeResult, it.ingredient.id, it.quantity, it.unit)
+            recipeValue?.let { item ->
+                // add recipe
+                val recipeResult = recipeRepository.insert(recipeValue)
+                if (recipeResult == -1L) {
+                    _insertResult.postValue(false)
+                } else {
+                    ///
+                    val fileName = "recipe_${recipeResult}.jpg"
+                    val imageLink =
+                        imageStorageManager.saveImageToInternalStorage(imageUri, fileName)
+                    if (imageLink != null) {
+                        recipeRepository.updateImageLink(recipeResult, imageLink)
+                        val tempRecipe = item.copy(imageLink = imageLink)
+                        _recipe.postValue(tempRecipe)
                     }
-                    ingredientRecipeRepository.insertAll(ingredientRecipeList)
-                }
+                    ///
 
-                // add steps
-                stepsValue?.let { list ->
-                    val tempList = ArrayList(list)
-                    tempList.forEach { it.recipeId = recipeResult }
-                    stepRepository.insertAll(tempList)
-                }
+                    // add ingredients
+                    ingredientQuantityValue?.let {
+                        val ingredientRecipeList = ingredientQuantityValue.map {
+                            IngredientRecipe(recipeResult, it.ingredient.id, it.quantity, it.unit)
+                        }
+                        ingredientRecipeRepository.insertAll(ingredientRecipeList)
+                    }
 
-                _insertResult.postValue(true)
+                    // add steps
+                    stepsValue?.let { list ->
+                        val tempList = ArrayList(list)
+                        tempList.forEach { it.recipeId = recipeResult }
+                        stepRepository.insertAll(tempList)
+                    }
+
+                    _insertResult.postValue(true)
+                }
             }
         }
     }
 
-    fun updateRecipeToDB() = viewModelScope.launch(Dispatchers.IO) {
-        val recipeValue = withContext(Dispatchers.Main) { _recipe.value }
-        val ingredientQuantityValue =
-            withContext(Dispatchers.Main) { _ingredientQuantityList.value }
-        val stepsValue = withContext(Dispatchers.Main) { _stepList.value }
+    fun updateRecipeToDB() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val recipeValue = withContext(Dispatchers.Main) { _recipe.value }
+            val ingredientQuantityValue =
+                withContext(Dispatchers.Main) { _ingredientQuantityList.value }
+            val stepsValue = withContext(Dispatchers.Main) { _stepList.value }
 
-        recipeValue?.let { item ->
-            // update recipe
-            val recipeResult = recipeRepository.update(item)
-            if (!recipeResult) {
-                _updateResult.postValue(false)
-            } else {
-                ///
-                val fileName = "recipe_${item.id}.jpg"
-                val imageLink = imageStorageManager.saveImageToInternalStorage(imageUri, fileName)
-                if (imageLink != null) {
-                    recipeRepository.updateImageLink(item.id, imageLink)
-                    val tempRecipe = item.copy(imageLink = imageLink)
-                    tempRecipe.id = item.id
-                    _recipe.postValue(tempRecipe)
-                }
-                ///
-
-                // update ingredients
-                ingredientQuantityValue?.let {
-                    // delete all old ingredients
-                    val deleteResult = ingredientRecipeRepository.deleteAllByRecipe(recipeValue.id)
-                    val ingredientRecipeList = ingredientQuantityValue.map {
-                        IngredientRecipe(recipeValue.id, it.ingredient.id, it.quantity, it.unit)
+            recipeValue?.let { item ->
+                // update recipe
+                val recipeResult = recipeRepository.update(item)
+                if (!recipeResult) {
+                    _updateResult.postValue(false)
+                } else {
+                    ///
+                    val fileName = "recipe_${item.id}.jpg"
+                    val imageLink =
+                        imageStorageManager.saveImageToInternalStorage(imageUri, fileName)
+                    if (imageLink != null) {
+                        recipeRepository.updateImageLink(item.id, imageLink)
+                        val tempRecipe = item.copy(imageLink = imageLink)
+                        tempRecipe.id = item.id
+                        _recipe.postValue(tempRecipe)
                     }
-                    ingredientRecipeRepository.insertAll(ingredientRecipeList)
-                }
+                    ///
 
-                // update steps
-                stepsValue?.let {
-                    val deleteResult = stepRepository.deleteAllByRecipe(recipeValue.id)
-                    stepRepository.insertAll(it)
-                }
+                    // update ingredients
+                    ingredientQuantityValue?.let {
+                        // delete all old ingredients
+                        val deleteResult =
+                            ingredientRecipeRepository.deleteAllByRecipe(recipeValue.id)
+                        val ingredientRecipeList = ingredientQuantityValue.map {
+                            IngredientRecipe(recipeValue.id, it.ingredient.id, it.quantity, it.unit)
+                        }
+                        ingredientRecipeRepository.insertAll(ingredientRecipeList)
+                    }
 
-                _updateResult.postValue(true)
+                    // update steps
+                    stepsValue?.let {
+                        val deleteResult = stepRepository.deleteAllByRecipe(recipeValue.id)
+                        stepRepository.insertAll(it)
+                    }
+
+                    _updateResult.postValue(true)
+                }
             }
         }
     }
 
-    fun deleteRecipeFromDB() = viewModelScope.launch(Dispatchers.IO) {
-        val recipeValue = withContext(Dispatchers.Main) { _recipe.value }
-
-        recipeValue?.let {
-            val deleteRecipeResult = recipeRepository.delete(it)
-            val deleteImageResult = imageStorageManager.deleteImage(it.imageLink)
-            _deleteResult.postValue(deleteRecipeResult)
+    fun deleteRecipeFromDB() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val recipeValue = withContext(Dispatchers.Main) { _recipe.value }
+            recipeValue?.let {
+                val deleteRecipeResult = recipeRepository.delete(it)
+                val deleteImageResult = imageStorageManager.deleteImage(it.imageLink)
+                _deleteResult.postValue(deleteRecipeResult)
+            }
         }
     }
 
@@ -220,8 +228,4 @@ class RecipeViewModel @Inject constructor(
             _stepList.value = tempList
         }
     }
-
-//    fun syncIngredientListFromRV(newList: List<IngredientQuantity>) {
-//        _ingredientQuantityList.value = newList
-//    }
 }
