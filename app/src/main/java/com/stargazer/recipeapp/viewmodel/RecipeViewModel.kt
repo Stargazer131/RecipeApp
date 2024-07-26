@@ -157,10 +157,6 @@ class RecipeViewModel @Inject constructor(
         }
     }
 
-    fun syncIngredientListFromRV(newList: List<IngredientQuantity>) {
-        _ingredientQuantityList.value = newList
-    }
-
     fun deleteIngredientData(position: Int) {
         _ingredientQuantityList.value?.let { currentList ->
             val tempList = ArrayList(currentList)
@@ -224,4 +220,8 @@ class RecipeViewModel @Inject constructor(
             _stepList.value = tempList
         }
     }
+
+//    fun syncIngredientListFromRV(newList: List<IngredientQuantity>) {
+//        _ingredientQuantityList.value = newList
+//    }
 }

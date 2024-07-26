@@ -190,7 +190,7 @@ class EditRecipeActivity : AppCompatActivity(), OnIngredientChangeListener, OnSt
         }
 
         buttonAddIngredient.setOnClickListener {
-            viewModel.syncIngredientListFromRV(adapterIngredient.getIngredientList())
+//            viewModel.syncIngredientListFromRV(adapterIngredient.getIngredientList())
             val intent = Intent(this, ChooseIngredientActivity::class.java)
             intent.putExtra("recipeId", recipeId)
             chooseIngredientLauncher.launch(intent)
@@ -231,6 +231,7 @@ class EditRecipeActivity : AppCompatActivity(), OnIngredientChangeListener, OnSt
 
         viewModel.updateRecipeData(name, description, favorite, youtubeLink, null)
         viewModel.updateImageLink(chosenImageUri)
+        clearAllFocus()
 
         if (recipeId == -1L) {
             viewModel.insertRecipeToDB()
@@ -248,6 +249,33 @@ class EditRecipeActivity : AppCompatActivity(), OnIngredientChangeListener, OnSt
         }
 
         return true
+    }
+
+    private fun clearAllFocus() {
+        for (i in 0 until recyclerViewStep.childCount) {
+            val child = recyclerViewStep.getChildAt(i)
+            val inputStep = child.findViewById<TextInputEditText>(R.id.input_step)
+            if (inputStep != null && inputStep.hasFocus()) {
+                inputStep.clearFocus()
+                break
+            }
+        }
+
+        for (i in 0 until recyclerViewIngredient.childCount) {
+            val child = recyclerViewIngredient.getChildAt(i)
+            val inputQuantity = child.findViewById<TextInputEditText>(R.id.input_quantity)
+            val inputUnit = child.findViewById<TextInputEditText>(R.id.input_unit)
+
+            if (inputQuantity != null && inputQuantity.hasFocus()) {
+                inputQuantity.clearFocus()
+                break
+            }
+
+            if (inputUnit != null && inputUnit.hasFocus()) {
+                inputUnit.clearFocus()
+                break
+            }
+        }
     }
 
     override fun onDeleteIngredientClick(position: Int) {

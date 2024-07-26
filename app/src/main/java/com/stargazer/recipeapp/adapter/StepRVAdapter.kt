@@ -12,7 +12,6 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.stargazer.recipeapp.R
 import com.stargazer.recipeapp.model.Step
-import com.stargazer.recipeapp.utils.showToast
 import com.stargazer.recipeapp.utils.showYesNoDialog
 
 class StepRVAdapter(
@@ -61,8 +60,6 @@ class StepRVAdapter(
 
                 allSteps[position].description = step
             }
-
-            showToast(context, "Gain focus is: ${hasFocus.toString()}")
         }
 
     }
@@ -86,3 +83,4 @@ class StepRVAdapter(
 interface OnStepChangeListener {
     fun onDeleteStepClick(position: Int)
 }
+
