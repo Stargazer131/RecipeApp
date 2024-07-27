@@ -1,15 +1,29 @@
 package com.stargazer.recipeapp.utils
 
 import android.content.Context
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import com.stargazer.recipeapp.R
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 fun showToast(context: Context, message: String) {
-    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+    val layout = inflater.inflate(R.layout.toast_layout, null)
+    val textView: TextView = layout.findViewById(R.id.toast_message)
+    textView.text = message
+
+    val toast = Toast(context)
+    toast.duration = Toast.LENGTH_SHORT
+    toast.view = layout
+    toast.setGravity(Gravity.CENTER, 0, 0)
+    toast.show()
 }
+
 
 fun showYesNoDialog(context: Context, title: String, message: String, onYes: () -> Unit) {
     val builder = AlertDialog.Builder(context)

@@ -193,7 +193,6 @@ class EditRecipeActivity : AppCompatActivity(), OnIngredientChangeListener, OnSt
         }
 
         buttonAddIngredient.setOnClickListener {
-//            viewModel.syncIngredientListFromRV(adapterIngredient.getIngredientList())
             val intent = Intent(this, ChooseIngredientActivity::class.java)
             intent.putExtra("recipeId", recipeId)
             chooseIngredientLauncher.launch(intent)
@@ -222,12 +221,12 @@ class EditRecipeActivity : AppCompatActivity(), OnIngredientChangeListener, OnSt
         }
 
         buttonYoutube.setOnClickListener {
-            val youtubeUrl = inputYoutubeLink.text.toString()
             try {
+                val youtubeUrl = inputYoutubeLink.text.toString()
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(youtubeUrl))
                 startActivity(intent)
             } catch (_: Exception) {
-
+                showToast(this, "Invalid URL")
             }
         }
     }

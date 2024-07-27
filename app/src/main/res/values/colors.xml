@@ -17,5 +17,6 @@
     <color name="brown">#A52A2A</color>
     <color name="off_white">#FAFAFA</color>
     <color name="light_gray">#C3C3C3</color>
-    <color name="light_white">#83FFEEEE</color>
+
+    <color name="row_color">#EDE7F6</color>
 </resources>
