@@ -48,6 +48,9 @@ class RecipeViewModel @Inject constructor(
     private val _deleteResult = MutableLiveData<Boolean>()
     val deleteResult: LiveData<Boolean> get() = _deleteResult
 
+    /**
+     * Set the data for MutableLiveData
+     */
     fun setRecipeData(id: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             val recipeResult = recipeRepository.getById(id) ?: Recipe()
@@ -61,6 +64,9 @@ class RecipeViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Insert the current data of MutableLiveData to database
+     */
     fun insertRecipeToDB() {
         viewModelScope.launch(Dispatchers.IO) {
             val recipeValue = withContext(Dispatchers.Main) { _recipe.value }
@@ -74,7 +80,7 @@ class RecipeViewModel @Inject constructor(
                 if (recipeResult == -1L) {
                     _insertResult.postValue(false)
                 } else {
-                    ///
+                    /// save image
                     val fileName = "recipe_${recipeResult}.jpg"
                     val imageLink =
                         imageStorageManager.saveImageToInternalStorage(imageUri, fileName)
@@ -106,6 +112,9 @@ class RecipeViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Update the current data of MutableLiveData to database
+     */
     fun updateRecipeToDB() {
         viewModelScope.launch(Dispatchers.IO) {
             val recipeValue = withContext(Dispatchers.Main) { _recipe.value }
@@ -119,7 +128,7 @@ class RecipeViewModel @Inject constructor(
                 if (!recipeResult) {
                     _updateResult.postValue(false)
                 } else {
-                    ///
+                    /// save image
                     val fileName = "recipe_${item.id}.jpg"
                     val imageLink =
                         imageStorageManager.saveImageToInternalStorage(imageUri, fileName)
@@ -154,6 +163,9 @@ class RecipeViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Delete the current data of MutableLiveData from database
+     */
     fun deleteRecipeFromDB() {
         viewModelScope.launch(Dispatchers.IO) {
             val recipeValue = withContext(Dispatchers.Main) { _recipe.value }
@@ -165,6 +177,9 @@ class RecipeViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Remove an ingredient from the MutableLiveData
+     */
     fun deleteIngredientData(position: Int) {
         _ingredientQuantityList.value?.let { currentList ->
             val tempList = ArrayList(currentList)
@@ -173,7 +188,9 @@ class RecipeViewModel @Inject constructor(
         }
     }
 
-
+    /**
+     * Add an ingredient to the MutableLiveData
+     */
     fun addIngredientData(ingredients: List<Ingredient>, recipeId: Long) {
         _ingredientQuantityList.value?.let { currentList ->
             val tempList = ArrayList(currentList)
@@ -185,6 +202,9 @@ class RecipeViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Update the data for MutableLiveData
+     */
     fun updateRecipeData(
         name: String?, description: String?, favorite: Boolean?,
         youtubeLink: String?, imageLink: String?
@@ -204,10 +224,16 @@ class RecipeViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Update the image uri that will be used when inserting, updating or deleting in database
+     */
     fun updateImageLink(chosenImageUri: Uri?) {
         imageUri = chosenImageUri
     }
 
+    /**
+     * Add an step to the MutableLiveData
+     */
     fun addStepData(recipeId: Long) {
         _stepList.value?.let { currentList ->
             val tempList = ArrayList(currentList)
@@ -218,6 +244,9 @@ class RecipeViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Remove a step from the MutableLiveData
+     */
     fun deleteStepData(position: Int) {
         _stepList.value?.let { currentList ->
             val tempList = ArrayList(currentList)

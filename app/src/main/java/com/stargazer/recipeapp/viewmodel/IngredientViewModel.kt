@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.stargazer.recipeapp.model.Ingredient
-import com.stargazer.recipeapp.repository.IngredientRecipeRepository
 import com.stargazer.recipeapp.repository.IngredientRepository
 import com.stargazer.recipeapp.utils.ImageStorageManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +17,6 @@ import javax.inject.Inject
 @HiltViewModel
 class IngredientViewModel @Inject constructor(
     private val ingredientRepository: IngredientRepository,
-    private val ingredientRecipeRepository: IngredientRecipeRepository,
     private val imageStorageManager: ImageStorageManager
 ) : ViewModel() {
 
@@ -35,6 +33,9 @@ class IngredientViewModel @Inject constructor(
     private val _deleteResult = MutableLiveData<Boolean>()
     val deleteResult: LiveData<Boolean> get() = _deleteResult
 
+    /**
+     * Set the data for MutableLiveData
+     */
     fun setIngredientData(id: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             val result = ingredientRepository.getById(id) ?: Ingredient()
@@ -42,6 +43,9 @@ class IngredientViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Update the data for MutableLiveData
+     */
     fun updateIngredientData(name: String?, description: String?, imageLink: String?) {
         _ingredient.value?.let { currentIngredient ->
             val oldId = currentIngredient.id
@@ -56,13 +60,16 @@ class IngredientViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Insert the current data of MutableLiveData to database
+     */
     fun insertIngredientToDB() {
         viewModelScope.launch(Dispatchers.IO) {
             val ingredientValue = withContext(Dispatchers.Main) { _ingredient.value }
             ingredientValue?.let {
                 val result = ingredientRepository.insert(it)
                 if (result != -1L) {
-                    ///
+                    /// save the image
                     val fileName = "ingredient_${result}.jpg"
                     val imageLink =
                         imageStorageManager.saveImageToInternalStorage(imageUri, fileName)
@@ -78,6 +85,9 @@ class IngredientViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Update the current data of MutableLiveData to database
+     */
     fun updateIngredientToDB() {
         viewModelScope.launch(Dispatchers.IO) {
             val ingredientValue = withContext(Dispatchers.Main) { _ingredient.value }
@@ -85,7 +95,7 @@ class IngredientViewModel @Inject constructor(
                 val result = ingredientRepository.update(it)
                 _updateResult.postValue(result)
 
-                ///
+                /// save the image
                 val fileName = "ingredient_${it.id}.jpg"
                 val imageLink = imageStorageManager.saveImageToInternalStorage(imageUri, fileName)
                 if (imageLink != null) {
@@ -99,6 +109,9 @@ class IngredientViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Delete the current data of MutableLiveData from database
+     */
     fun deleteIngredientFromDB() {
         viewModelScope.launch(Dispatchers.IO) {
             val ingredientValue = withContext(Dispatchers.Main) { _ingredient.value }
@@ -110,6 +123,9 @@ class IngredientViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Update the image uri that will be used when inserting, updating or deleting in database
+     */
     fun updateImageLink(chosenImageUri: Uri?) {
         imageUri = chosenImageUri
     }

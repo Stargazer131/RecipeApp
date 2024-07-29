@@ -1,6 +1,5 @@
 package com.stargazer.recipeapp.adapter
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.view.LayoutInflater
@@ -10,7 +9,6 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
 import com.stargazer.recipeapp.R
@@ -20,14 +18,13 @@ import com.stargazer.recipeapp.utils.showYesNoDialog
 
 class IngredientQuantityRVAdapter(
     val context: Context,
-    val ingredientChangeListener: OnIngredientChangeListener
+    private val ingredientChangeListener: OnIngredientChangeListener
 ) :
     RecyclerView.Adapter<IngredientQuantityRVAdapter.ViewHolder>() {
 
     private val allIngredientQuantity = ArrayList<IngredientQuantity>()
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val parentView: CardView = itemView.findViewById(R.id.parent_layout)
         val imageView: ImageView = itemView.findViewById(R.id.image_view)
         val textName: TextView = itemView.findViewById(R.id.text_name)
         val inputQuantity: TextInputEditText = itemView.findViewById(R.id.input_quantity)
@@ -43,7 +40,6 @@ class IngredientQuantityRVAdapter(
         return ViewHolder(itemView)
     }
 
-    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.textName.text = allIngredientQuantity[position].ingredient.name
         holder.inputQuantity.setText(quantityToString(allIngredientQuantity[position].quantity))
@@ -66,6 +62,7 @@ class IngredientQuantityRVAdapter(
             }
         }
 
+        // Update data if user click off the edit text (counted as a change)
         holder.inputUnit.setOnFocusChangeListener { view, hasFocus ->
             if (!hasFocus) {
                 var unit = (view as? EditText)?.text?.toString()
@@ -76,6 +73,7 @@ class IngredientQuantityRVAdapter(
             }
         }
 
+        // Update data if user click off the edit text (counted as a change)
         holder.inputQuantity.setOnFocusChangeListener { view, hasFocus ->
             if (!hasFocus) {
                 val quantity = (view as? EditText)?.text?.toString()?.toDoubleOrNull()
@@ -89,7 +87,13 @@ class IngredientQuantityRVAdapter(
         return allIngredientQuantity.size
     }
 
-    @SuppressLint("NotifyDataSetChanged")
+    /**
+     * Update underlying data and Removing duplicated item
+     *
+     * This function pass a reference for every object in newList
+     * to update the data, so beware that the change made to data in adapter may be reflected
+     * to outside data
+     */
     fun updateList(newList: List<IngredientQuantity>) {
         val filterIndices: ArrayList<Int> = arrayListOf()
         for (i in newList.lastIndex downTo 0) {
@@ -107,10 +111,11 @@ class IngredientQuantityRVAdapter(
         notifyDataSetChanged()
     }
 
-    fun getIngredientList(): List<IngredientQuantity> {
-        return ArrayList(allIngredientQuantity)
-    }
-
+    /**
+     * Format real number:
+     * + 5.00 -> 5
+     * + 5.12345 -> 5.12
+     */
     private fun quantityToString(quantity: Double): String {
         return if (quantity % 1.0 == 0.0) {
             quantity.toInt().toString()
@@ -121,7 +126,5 @@ class IngredientQuantityRVAdapter(
 }
 
 interface OnIngredientChangeListener {
-    //    fun onUnitChanged(position: Int, unit: String)
-//    fun onQuantityChanged(position: Int, quantity: Double)
     fun onDeleteIngredientClick(position: Int)
 }

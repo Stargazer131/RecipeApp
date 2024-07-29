@@ -25,13 +25,11 @@ class IngredientListFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_ingredient_list, container, false)
 
-        // Initialize RecyclerView
         recyclerView = view.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         adapter = IngredientRVAdapter(requireContext())
         recyclerView.adapter = adapter
 
-        // Observe LiveData from ViewModel
         viewModel.allIngredients.observe(viewLifecycleOwner) { list ->
             list?.let {
                 adapter.updateList(it)

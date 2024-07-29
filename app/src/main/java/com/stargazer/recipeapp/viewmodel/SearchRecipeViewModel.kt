@@ -20,6 +20,9 @@ class SearchRecipeViewModel @Inject constructor(
     private val _recipeList = MutableLiveData<List<Recipe>>()
     val recipeList: LiveData<List<Recipe>> get() = _recipeList
 
+    /**
+     * Set the data for MutableLiveData
+     */
     fun setSearchRecipesData(
         keywordName: String,
         sortCriteria: String,
@@ -42,6 +45,9 @@ class SearchRecipeViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Set the data for MutableLiveData
+     */
     fun setSearchRecipesData(
         startDay: Date,
         endDay: Date,

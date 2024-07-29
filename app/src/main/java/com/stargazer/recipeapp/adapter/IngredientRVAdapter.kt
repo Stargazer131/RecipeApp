@@ -1,6 +1,5 @@
 package com.stargazer.recipeapp.adapter
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
@@ -36,7 +35,6 @@ class IngredientRVAdapter(
         return ViewHolder(itemView)
     }
 
-    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.textName.text = allIngredients[position].name
         holder.parentView.setOnClickListener {
@@ -57,7 +55,11 @@ class IngredientRVAdapter(
         return allIngredients.size
     }
 
-    @SuppressLint("NotifyDataSetChanged")
+    /**
+     * This function pass a reference for every object in newList
+     * to update the data, so beware that the change made to data in adapter may be reflected
+     * to outside data
+     */
     fun updateList(newList: List<Ingredient>) {
         allIngredients.clear()
         allIngredients.addAll(newList)

@@ -1,6 +1,5 @@
 package com.stargazer.recipeapp.adapter
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -16,7 +15,7 @@ import com.stargazer.recipeapp.utils.showYesNoDialog
 
 class StepRVAdapter(
     val context: Context,
-    val stepChangeListener: OnStepChangeListener
+    private val stepChangeListener: OnStepChangeListener
 ) :
     RecyclerView.Adapter<StepRVAdapter.ViewHolder>() {
 
@@ -36,7 +35,6 @@ class StepRVAdapter(
         return ViewHolder(itemView)
     }
 
-    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.inputStep.setText(allSteps[position].description)
         holder.inputLayoutStep.hint = "Step ${allSteps[position].order}"
@@ -51,6 +49,7 @@ class StepRVAdapter(
             }
         }
 
+        // Update data if user click off the edit text (counted as a change)
         holder.inputStep.setOnFocusChangeListener { view, hasFocus ->
             if (!hasFocus) {
                 var step = (view as? EditText)?.text?.toString()
@@ -68,15 +67,15 @@ class StepRVAdapter(
         return allSteps.size
     }
 
-    @SuppressLint("NotifyDataSetChanged")
+    /**
+     * This function pass a reference for every object in newList
+     * to update the data, so beware that the change made to data in adapter may be reflected
+     * to outside data
+     */
     fun updateList(newList: List<Step>) {
         allSteps.clear()
         allSteps.addAll(newList)
         notifyDataSetChanged()
-    }
-
-    fun getStepList(): List<Step> {
-        return ArrayList(allSteps)
     }
 }
 

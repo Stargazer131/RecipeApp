@@ -25,13 +25,11 @@ class RecipeListFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_recipe_list, container, false)
 
-        // Initialize RecyclerView
         recyclerView = view.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         adapter = RecipeRVAdapter(requireContext())
         recyclerView.adapter = adapter
 
-        // Observe LiveData from ViewModel
         viewModel.allRecipes.observe(viewLifecycleOwner) { list ->
             list?.let {
                 adapter.updateList(it)

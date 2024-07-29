@@ -42,13 +42,11 @@ class ChooseIngredientActivity : AppCompatActivity() {
     }
 
     private fun setUpRecyclerView() {
-        // Initialize RecyclerView
         recyclerView = findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(this)
         adapter = ChooseIngredientRVAdapter(this)
         recyclerView.adapter = adapter
 
-        // Observe LiveData from ViewModel
         viewModel.ingredientList.observe(this) { list ->
             list?.let {
                 adapter.updateList(it)

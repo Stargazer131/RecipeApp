@@ -19,6 +19,9 @@ class SearchIngredientViewModel @Inject constructor(
     private val _ingredientList = MutableLiveData<List<Ingredient>>()
     val ingredientList: LiveData<List<Ingredient>> get() = _ingredientList
 
+    /**
+     * Set the data for MutableLiveData
+     */
     fun setIngredientsData(id: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             val result = ingredientRepository.getAllNotInRecipe(id)
@@ -26,6 +29,9 @@ class SearchIngredientViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Set the data for MutableLiveData, only ingredients that isn't related to the recipe
+     */
     fun setSearchIngredientsData(keyword: String, recipeId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             val tempList = ingredientRepository.getAllForRecipe(recipeId)
@@ -36,6 +42,9 @@ class SearchIngredientViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Set the data for MutableLiveData
+     */
     fun setSearchIngredientsData(keywordName: String, reverseOrder: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             var result = ingredientRepository.getAllByName(keywordName)
