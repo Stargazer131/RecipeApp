@@ -150,7 +150,7 @@ class SearchRecipeActivity : AppCompatActivity() {
             val favorite = spinnerFavorite.selectedItem.toString()
             when (spinnerSearchCriteria.selectedItem.toString()) {
                 "Name" -> {
-                    val keyword = inputKeyword.text.toString()
+                    val keyword = inputKeyword.text.toString().trim()
                     viewModel.setSearchRecipesData(
                         keyword,
                         sortCriteria,

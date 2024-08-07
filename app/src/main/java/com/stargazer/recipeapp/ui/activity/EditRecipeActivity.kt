@@ -236,9 +236,9 @@ class EditRecipeActivity : AppCompatActivity(), OnIngredientChangeListener, OnSt
             return
         }
 
-        val name = inputName.text.toString()
-        val description = inputDescription.text.toString()
-        val youtubeLink = inputYoutubeLink.text.toString()
+        val name = inputName.text.toString().trim()
+        val description = inputDescription.text.toString().trim()
+        val youtubeLink = inputYoutubeLink.text.toString().trim()
         val favorite = checkBoxFavorite.isChecked
 
         viewModel.updateRecipeData(name, description, favorite, youtubeLink, null)
@@ -291,10 +291,12 @@ class EditRecipeActivity : AppCompatActivity(), OnIngredientChangeListener, OnSt
     }
 
     override fun onDeleteIngredientClick(position: Int) {
+        clearAllFocus()
         viewModel.deleteIngredientData(position)
     }
 
     override fun onDeleteStepClick(position: Int) {
+        clearAllFocus()
         viewModel.deleteStepData(position)
     }
 }

@@ -54,7 +54,7 @@ class SearchIngredientActivity : AppCompatActivity() {
 
     private fun setUpSearch() {
         buttonSearch.setOnClickListener {
-            val keyword = inputKeyword.text.toString()
+            val keyword = inputKeyword.text.toString().trim()
             val searchCriteria = spinnerSearchCriteria.selectedItem.toString()
             val sortCriteria = spinnerSortCriteria.selectedItem.toString()
             val descendingOrder = switchButton.isChecked

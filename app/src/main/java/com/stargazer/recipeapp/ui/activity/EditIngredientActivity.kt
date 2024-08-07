@@ -146,8 +146,8 @@ class EditIngredientActivity : AppCompatActivity() {
             return
         }
 
-        val name = inputName.text.toString()
-        val description = inputDescription.text.toString()
+        val name = inputName.text.toString().trim()
+        val description = inputDescription.text.toString().trim()
         viewModel.updateIngredientData(name, description, null)
         viewModel.updateImageLink(chosenImageUri)
 
